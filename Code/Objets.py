@@ -22,10 +22,7 @@ class Boule(metaclass = ABCMeta):  # une boule (blanche ou colorée), ses caract
 
     def evolution(self, dt,k, eps = 0.8):
         """
-        Auteur : Matthieu
-
-        evolution :
-        En l'absence de collision (ici donc), on suppose le mouvement des boules rectiligne en l'absence de collisions (bords ou autres boules).
+        En l'absence de collision (ici donc), on suppose le mouvement des boules rectiligne (bords ou autres boules).
         Actualise la vitesse et la position de la boule.
 
         entrées : float dt qui correspond à l'intervalle de temps entre chaque actualisation de la vitesse et de la position.
@@ -47,9 +44,6 @@ class Boule(metaclass = ABCMeta):  # une boule (blanche ou colorée), ses caract
 
     def rebond(self, bord):
         """
-        Auteur : Matthieu
-
-        rebond :
         simule un rebond sur une paroi droite. Actualise la vitesse de la boule après rebond.
 
         entrée : string caractérisant la paroi sur laquelle il y a rebond (paroi nord, sud, est ou ouest)
@@ -65,13 +59,11 @@ class Boule(metaclass = ABCMeta):  # une boule (blanche ou colorée), ses caract
 
     def coll(self, boule2):
         """
-        Auteur : Elodie
-
-        coll :
         Simule la collision entre 2 boules. Change la vitesse de ces 2 boules.
 
-        entrée : boule2, la boule qui entre en collision avec la première. On a accès à leur position, et à leur vitesse (valeur absolue et angle).
+        entrée : boule2, la boule qui entre en collision avec la première. On a accès à leur position, et à leur vitesse (norme et direction).
 
+        sortie : None
         """
 
         alpha = np.linspace (0,2*np.pi,100)
@@ -80,8 +72,8 @@ class Boule(metaclass = ABCMeta):  # une boule (blanche ou colorée), ses caract
         for a in alpha :
             da = abs ((self.x + self.r*np.cos (a) - boule2.x)**2 + (self.y + self.r*np.sin (a)- boule2.y)**2 )
             if d > da :
-                angle, d = a , da   # pour le point tangent au 2 boule, angle formé par Ox et la droite passant par le centre de la 1ere boule et le point tangent
-        #angle_collision = (angle_b1 + angle)/2
+                angle, d = a , da   # pour le point tangent aux 2 boules, angle formé par Ox et la droite passant par le centre de la 1ere boule et le point tangent
+
         v1 = (self.vx**2 + self.vy**2)**0.5
         v2 = (boule2.vx ** 2 + boule2.vy ** 2) ** 0.5
         if v1 == 0 :
@@ -135,16 +127,14 @@ class Boule(metaclass = ABCMeta):  # une boule (blanche ou colorée), ses caract
             boule2.vx, boule2.vy, self.vx, self.vy = v2_p*np.cos (angle), v2_p*np.sin (angle), v1_p*np.cos ((2*angle_b1 - angle)%(2*np.pi)), v1_p*np.sin ((2*angle_b1  -angle)%(2*np.pi))
 
 class Boule_coloree(Boule):
-    # on définit la classe représentant les boules colorées, classe qui hérite de la classe boule
+    # on définit la classe représentant les boules colorées, classe qui hérite de la classe Boule
 
-    image = QtGui.QImage("rouger.png")
+    image = QtGui.QImage("../Images/rouger.png")
     def __init__(self, x, y, r = 0.03):
         super().__init__(x, y,r)
 
     def dessinimage(self, qp):
         """
-        Auteur : Matthieu
-
         dessinimage :
         Affiche l'image de la boule rouge sur la table de billard, à son emplacement calculé
 
@@ -154,38 +144,29 @@ class Boule_coloree(Boule):
 
         qp.drawImage(QtCore.QRect(10+ self.x+50 , self.y + 10 + 52,35.5,35.5 ), self.image)
 
-class Boule_blanche(Boule):  # on définit la classe représentant les boules colorées,
-    image = QtGui.QImage("blancher.png")
+class Boule_blanche(Boule):  # on définit la classe représentant les boules blanches, classe qui hérite de la classe Boule
+    image = QtGui.QImage("../Images/blancher.png")
     def __init__(self, x, y, r = 0.03):  #classe qui hérite de la classe boule
         super().__init__(x, y,r)
 
     def impulsion(self, cap_V0, norme_V0):
         """
-        Auteur : Matthieu
-
-        impulsion :
         Met en mouvement la boule blanche, en modifiant sa vitesse.
 
         entrées : float cap_V0 : angle vers lequel la boule doit être propulsée
                   float norme_V0: norme de la vitesse donnée à la boule blanche
 
         sortie  : None
-
         """
 
         self.vy = norme_V0 * np.sin(cap_V0 * np.pi / 180) #v0[0]
         self.vx = norme_V0 * np.cos(cap_V0 * np.pi / 180) #v0[1]
-       #Recevoir uneimpulsion est une caracteristique propre aux boules blanches selon les règles du billard
-        # Elles sont propulsées par un coup de queue, qui leur confere un mouvement initial represente par cap_V0 et norme_V0
+        # Recevoir uneimpulsion est une caracteristique propre aux boules blanches selon les règles du billard
+        # Elles sont propulsées par un coup de queue, qui leur confère un mouvement initial representé par cap_V0 et norme_V0
 
 
     def dessinimage(self, qp):
-
         """
-        Auteur : Matthieu
-
-        dessinimage :
-
         Affiche l'image de la boule blanche sur la table de billard, à son emplacement calculé
 
         entrée : le peintre utilisé pour afficher l'image
@@ -200,7 +181,7 @@ class Plateau(list):  # le plateau est un espace délimité, composé d'une list
     def __init__(self, l=10, L=10, nb=2, nc=1, k = 0.998, mode = 0):
         super().__init__(self)
         self.bs, self.bn, self.bo, self.be = l, 0, 0, L   # bord sud, nord, ouest, est
-        self.n = nb + nc  # nombre total de boules, dans le cas général, autre que dans le jeu actuel ou il vaut 3
+        self.n = nb + nc  # nombre total de boules, dans le cas général, autre que dans le jeu actuel où il vaut 3
         self.k = k  # coefficient de résistance au roulement
         #self.mode = mode  # choix du mode de jeu, non encore implémenté
         self.queue = Queue()
@@ -215,10 +196,7 @@ class Plateau(list):  # le plateau est un espace délimité, composé d'une list
 
     def proche_bord(self, posx, posy, i):
         """
-        Auteur : Matthieu
-
-        proche_bord :
-        Si une boule est proche d'un bord, et qu'on constate que la boule se rapproche de ce bord,
+        Si une boule est proche d'un bord, et que l'on constate que la boule se rapproche de ce bord,
         on appelle la fonction rebond, en précisant sur quelle paroi celui-ci survient.
 
         entrées :
@@ -242,15 +220,13 @@ class Plateau(list):  # le plateau est un espace délimité, composé d'une list
                 Boule.rebond(self[i], 'S')
 
 
-    def collisions(self,col,i,j,n): #methode récursive
+    def collisions(self,col,i,j,n): #méthode récursive
         """"
-        Auteur: Elodie
-
-        collisions :
         Détecte chaque collision imminente entre les boules, et simule la déviation de trajectoire associée, en appelant la fonction coll, qui gère la collision entre 2 boules
 
         Entrees:
                 col: liste vide à l'initialisation de la recursion
+                i, j : deux boules
         """
 
         #Principe:
@@ -273,9 +249,6 @@ class Plateau(list):  # le plateau est un espace délimité, composé d'une list
 
     def un_coup(self, dt,joueur=1):
         """
-        Auteur: Matthieu
-
-        un_coup :
         On simule un coup de queue : on met en mouvement la boule blanche, et on traite collisions entre boules et avec la paroi.
         Une fois le coup terminé (lorsque les boules ont toutes une vitesse inférieure à eps), on donne la vitesse 0 à chaque boule, pourqu'elles soient vraiment immobiles pour le tour suivant
 
@@ -307,22 +280,18 @@ class Plateau(list):  # le plateau est un espace délimité, composé d'une list
             self[i].vx, self[i].vy = 0,0  #on donne la vitesse 0 à chaque boule, pourqu'elles soient vraiment immobiles pour le tour suivant
 
 class Partie ():
-    def __init__ (self, nb_coups, dt = 0.005, LL = 10, ll=10):
+    def __init__ (self, nb_coups, dt = 0.005, LL = 10, ll=10, mode = 1):
         self.nb_coups = nb_coups
         self.dt = dt
         self.c = 0  # on s'arrête à nb_coups
         self.points = [0,0]  #en position 0, le joueur 2
         self.l = ll
         self.L= LL
-        self.plat = Plateau(mode=2, l=self.l, L=self.L)
+        self.plat = Plateau(l=self.l, L=self.L, mode = 1)
 
     def jouer (self) :  #En réalité, cette fonction n'est jamais appelée dans l'ihm, car on a adapte le corps de la methode dans l'IHM
-
         """
-        Auteur : Elodie
-        jouer :
         On simule une partie: une succession de coup, effectués par l'un ou l'autre des joueurs.
-
         """
 
         i = 1
@@ -348,7 +317,7 @@ class Partie ():
 
 class Queue ():
 
-    l = QtGui.QImage("qb8-removebg-preview.png")
+    l = QtGui.QImage("../Images/queues_l/qb8.png")
     def __init__(self):
         self.x = 0
         self.y = 0
@@ -359,7 +328,6 @@ class Queue ():
 
     def dessinimage(self, qp,angle, boulex=-10,bouley=-10):
         """
-        dessinimage :
         Affiche la queue dont l'utilisateur modifie l'angle par rapport à la boule qu'il veut frapper et qu'il écarte plus ou moins de la boule, pour lui donner
         plus ou moins de vitesse.
 
@@ -370,33 +338,22 @@ class Queue ():
         sortie  : 1 si la boule est considérée immobile, 0 si elle est en mouvement.
         """
 
-        LISTE = ["qb24-removebg-preview.png", "qb1-removebg-preview.png", "qb2-removebg-preview.png",
-                 "qb3-removebg-preview.png", "qb4-removebg-preview.png", "qb5-removebg-preview.png",
-                 "qb6_90-removebg-preview.png", "qb7-removebg-preview.png", "qb8-removebg-preview.png",
-                 "qb9-removebg-preview.png", "qb10_180-removebg-preview.png", "qb11-removebg-preview.png",
-                 "qb12_180-removebg-preview.png", "qb13-removebg-preview.png", "qb14-removebg-preview.png",
-                 "qb15-removebg-preview.png", "qb16-removebg-preview.png", "qb17-removebg-preview.png",
-                 "qb18-removebg-preview.png", "qb18-removebg-preview.png", "qb19-removebg-preview.png",
-                 "qb20-removebg-preview.png", "qb21-removebg-preview.png", "qb22-removebg-preview.png",
-                 "qb23-removebg-preview.png"]
+        LISTE = ["../Images/queues_l/qb24.png"]
+        LISTE = LISTE + [ "../Images/queues_l/" + "qb" + str(i) + ".png" for i in range (1, 24)]
         # liste de 24 images de queues inclinees tous les 15 degrés.
 
         self.l = QtGui.QImage (LISTE[int(angle * 24 / 360)]) # choix de la bonne image dans la liste LISTE
         qp.drawImage(QtCore.QRect(boulex-290 -21.5, bouley-285 -24.2, 600, 600) ,self.l)
 
 class Point ():
-    image = QtGui.QImage("point2.png")
+    image = QtGui.QImage("../Images/point2.png")
 
     def dessinimage(self, qp, boulex,bouley):
         """
-        Auteur : Elodie
-
-        dessinimage :
         Affiche le point rouge se situant au centre de la boule blanche dans laquelle il faut tirer avec la canne.
 
         entrée : qp, le peintre utilisé pour afficher l'image
                  boulex, bouley : coordoonées de la boule visee
-
 
         sortie  : 1 si la boule est considérée immobile, 0 si elle est en mouvement.
         """
@@ -404,12 +361,10 @@ class Point ():
         qp.drawImage(QtCore.QRect(boulex +93 -23 , bouley+95 -24.6, 10, 10), self.image)
 
 class Point_clique ():
-    image = QtGui.QImage("point_clique2.png")
+    image = QtGui.QImage("../Images/point_clique2.png")
 
     def dessinimage(self, qp, boulex,bouley):
         """
-        Auteur : Elodie
-
         dessinimage :
         Affiche l'endroit ou l'on a cliqué sur le billard, pour que l'on ait une idée de la trajectoire de la boule, qui se basse sur
         l'angle et la distance entre le point du et le point du relachement.

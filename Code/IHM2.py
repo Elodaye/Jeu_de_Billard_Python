@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit , QFormLayo
 from PyQt5.QtGui import QFont
 import numpy as np
 
-class JeuBillard (QtWidgets.QMainWindow):
+class JeuBillard2 (QtWidgets.QMainWindow):
     def __init__(self, p1 = "joueur 1",p2 = "joueur 2", nb = 10, mode = 1):
         super().__init__()
 
@@ -62,7 +62,9 @@ class JeuBillard (QtWidgets.QMainWindow):
         self.timer.timeout.connect(self.timer_0) # chaque fois que ce timer "tombe à 0", on appele la méthode timer_0.
 
         self.ui.label0.setFont(QFont('Helvetica', 10))
+
         self.ui.label.setFont(QFont ('Helvetica',10.5))
+
         self.ui.label2.setFont(QFont('Helvetica', 10))
 
         self.ui.label0.setText("Tour {}/{}".format(self.table.c + 1, self.nb_coups))  # On précise le tour de jeu actuel
@@ -196,7 +198,7 @@ class JeuBillard (QtWidgets.QMainWindow):
 
             else:
 
-                self.i += 1  # c'est au joueur suivant de jouer
+                self.i += 1  # c'est au joueur suivant de jouer -> va aider à changer la boule que l'on tape
 
                 self.ui.label.setText(("Pas de chance... C'est à {} de jouer.").format(self.joueurs[self.i % 2]))
                 self.ui.label.show()
@@ -271,6 +273,7 @@ class JeuBillard (QtWidgets.QMainWindow):
         if self.table.plat.queue.p == 0 :  # si la puissance p est nulle, c'est qu'on est en attente du coup suivant
 
             boulex, bouley = self.table.plat[self.i % 2].x + 90, self.table.plat[self.i % 2].y + 88.2
+            # TODO  la typiquement on a un modulo 2 qui est propre au mode français.
             # emplacement de la boule dans laquelle on tire
 
             dx, dy = self.table.plat.queue.x - self.xp, self.table.plat.queue.y - self.yp

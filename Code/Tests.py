@@ -1,5 +1,5 @@
 import unittest
-import Projet_Billard_BUISSET_FERRAND as pb
+import Objets as pb
 import numpy as np
 
 
