@@ -105,7 +105,7 @@ class Window_Menu (QtWidgets.QMainWindow) :
     def initialisation (self) :
         """
         initialisation :
-        recueille les prénoms des joueurs et le nombre de coups qu'ils veulent jouer.
+        recueille les prénoms des joueurs et le nombre de coups qu'ils veulent jouer, ainsi que le mode de jeu
         Lance la fenêtre de jeu avec ces paramètres
         """
 

@@ -281,7 +281,7 @@ class JeuBillard2 (QtWidgets.QMainWindow):
             # emplacement de la boule dans laquelle on tire
 
             dx, dy = self.table.plat.queue.x - self.xp, self.table.plat.queue.y - self.yp
-            #différence relative entre l'emplacement de la queue (du pointeur), et du point de cliquage
+            # différence relative entre l'emplacement de la queue (du pointeur), et du point de cliquage
 
             angle_q= orient_queue (dx,dy)         #fonction de calcul d'arctangente, en fin de script
             self.table.plat.queue.alpha_q =angle_q  # orientation que l'on donne à la queue

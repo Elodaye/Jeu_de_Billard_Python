@@ -149,7 +149,9 @@ class Boule_coloree(Boule):
 
         entrée : le peintre utilisé pour afficher l'image
 
-        sortie  : 1 si la boule est considérée immobile, 0 si elle est en mouvement."""
+        sortie  : 1 si la boule est considérée immobile, 0 si elle est en mouvement.
+        """
+
         if self.type == "R":
             qp.drawImage(QtCore.QRect(10+ self.x+50 -3 , self.y + 10 + 52 -3 , 40,40 ), self.image)
         elif self.type == "J":

@@ -26,7 +26,7 @@ class JeuBillard (QtWidgets.QMainWindow):
         self.ui.con.setPalette(pal)
 
         self.i = 0  # compteur qui représente le joueur qui est train de jouer (pair ou impair)
-        self.ANA = [] # analyse l'issue du coup: si le joueur à réussi à taper les 2 boules ou non
+        self.ANA = [] # analyse l'issue du coup : si le joueur à réussi à taper les 2 boules ou non
         self.MVT = []  # permet de vérifier qu'il y a toujours des boules en mouvement
 
         self.painter = QtGui.QPainter() # on instancie un premier peintre, pour les boules + le point qui désigne le joueur + le point de visée

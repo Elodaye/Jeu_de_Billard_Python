@@ -5,7 +5,6 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QLabel , QLineEdit , QFormLayout, QWidget
 from PyQt5.QtGui import QFont
 
-
 class Ui_mainWindow(object):
     def setupUi(self, mainWindow):
         mainWindow.setObjectName("mainWindow")
