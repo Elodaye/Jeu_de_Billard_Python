@@ -42,7 +42,7 @@ class JeuBillard (QtWidgets.QMainWindow):
 
         self.distx, self.disty = 0,0  # distance de la queue à la boule tirée (initialisée à 0)
 
-        self.table = Partie(self.nb_coups, 0.005, self.bx, self.by, mode) # On instancie la classe Partie, qui contient toutes
+        self.table = Partie(self.nb_coups, 0.005, self.bx, self.by, 1) # On instancie la classe Partie, qui contient toutes
         # les méthodes et variables d'instances nécessaires au fonctionnement du jeu de billard
 
         self.xp, self.yp = -3,-3  # on initialise ces valeurs à -3 car elles ne vaudront plus jamais -3 une fois la partie lancee :

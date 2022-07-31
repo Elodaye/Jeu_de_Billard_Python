@@ -130,8 +130,17 @@ class Boule_coloree(Boule):
     # on définit la classe représentant les boules colorées, classe qui hérite de la classe Boule
 
     image = QtGui.QImage("../Images/rouger.png")
-    def __init__(self, x, y, r = 0.03):
+    def __init__(self, x, y, r = 0.03, type = 'R'):
         super().__init__(x, y,r)
+        if type == "R":
+            self.image = QtGui.QImage("../Images/rouger.png")
+            self.type = "R"
+        elif type =="J":
+            self.image = QtGui.QImage("../Images/jauner.png")
+            self.type = "J"
+        else :
+            self.image = QtGui.QImage("../Images/noirer.png")
+            self.type = "N"
 
     def dessinimage(self, qp):
         """
@@ -141,8 +150,12 @@ class Boule_coloree(Boule):
         entrée : le peintre utilisé pour afficher l'image
 
         sortie  : 1 si la boule est considérée immobile, 0 si elle est en mouvement."""
-
-        qp.drawImage(QtCore.QRect(10+ self.x+50 , self.y + 10 + 52,35.5,35.5 ), self.image)
+        if self.type == "R":
+            qp.drawImage(QtCore.QRect(10+ self.x+50 -3 , self.y + 10 + 52 -3 , 40,40 ), self.image)
+        elif self.type == "J":
+            qp.drawImage(QtCore.QRect(10 + self.x + 50, self.y + 10 + 52 , 32, 32), self.image)
+        else :
+            qp.drawImage(QtCore.QRect(10 + self.x + 50 -3 , self.y + 10 + 52 -3 , 40, 40), self.image)
 
 class Boule_blanche(Boule):  # on définit la classe représentant les boules blanches, classe qui hérite de la classe Boule
     image = QtGui.QImage("../Images/blancher.png")
@@ -178,10 +191,10 @@ class Boule_blanche(Boule):  # on définit la classe représentant les boules bl
 
 
 class Plateau(list):  # le plateau est un espace délimité, composé d'une liste de boules
-    def __init__(self, l=10, L=10, nb=2, nc=1, k = 0.998, mode = 0):
+    def __init__(self, l=10, L=10, nb=2, nc=1, k = 0.998, mode = 1):
         super().__init__(self)
         self.bs, self.bn, self.bo, self.be = l, 0, 0, L   # bord sud, nord, ouest, est
-        self.n = nb + nc  # nombre total de boules, dans le cas général, autre que dans le jeu actuel où il vaut 3
+        #self.n = nb + nc  # nombre total de boules, dans le cas général, autre que dans le jeu actuel où il vaut 3
         self.k = k  # coefficient de résistance au roulement
         #self.mode = mode  # choix du mode de jeu, non encore implémenté
         self.queue = Queue()
@@ -189,9 +202,35 @@ class Plateau(list):  # le plateau est un espace délimité, composé d'une list
         self.viseur = Point_clique() #3 instances des classes définies juste apres
 
         #On joue uniquement dans le mode normal, avec deux boules blanches et une rouge, placées de maniere precise au debut de la partie:
-        self.append(Boule_blanche(0.2 * self.be, 0.75 * self.bs, r= 1.3*self.be * 0.03 / 2.54))
-        self.append(Boule_blanche(0.2 * self.be, 0.25 * self.bs, r=1.3*self.be * 0.03 / 2.54))
-        self.append(Boule_coloree(0.8 * self.be, 0.5 * self.bs, r=1.3*self.be * 0.03 / 2.54))
+        if mode == 1:
+            self.n = 3
+            self.append(Boule_blanche(0.2 * self.be, 0.75 * self.bs, r= 1.3*self.be * 0.03 / 2.54))
+            self.append(Boule_blanche(0.2 * self.be, 0.25 * self.bs, r=1.3*self.be * 0.03 / 2.54))
+            self.append(Boule_coloree(0.8 * self.be, 0.5 * self.bs, r=1.3*self.be * 0.03 / 2.54))
+        else :
+            self.n = 16
+            self.append(Boule_blanche(0.2 * self.be, 0.5 * self.bs, r=1.3 * self.be * 0.03 / 2.54))
+
+            self.append(Boule_coloree(0.8 * self.be, 0.38 * self.bs, r=1.3 * self.be * 0.03 / 2.54, type = 'R'))
+            self.append(Boule_coloree(0.8 * self.be, 0.44 * self.bs, r=1.3 * self.be * 0.03 / 2.54, type = 'J'))
+            self.append(Boule_coloree(0.8 * self.be, 0.5 * self.bs, r=1.3 * self.be * 0.03 / 2.54, type = 'J'))
+            self.append(Boule_coloree(0.8 * self.be, 0.56 * self.bs, r=1.3 * self.be * 0.03 / 2.54, type = 'R'))
+            self.append(Boule_coloree(0.8 * self.be, 0.62 * self.bs, r=1.3 * self.be * 0.03 / 2.54, type = 'J'))
+
+            self.append(Boule_coloree(0.76 * self.be, 0.41 * self.bs, r=1.3 * self.be * 0.03 / 2.54, type = 'J'))
+            self.append(Boule_coloree(0.76 * self.be, 0.47 * self.bs, r=1.3 * self.be * 0.03 / 2.54, type = 'R'))
+            self.append(Boule_coloree(0.76 * self.be, 0.53 * self.bs, r=1.3 * self.be * 0.03 / 2.54, type = 'J'))
+            self.append(Boule_coloree(0.76 * self.be, 0.59 * self.bs, r=1.3 * self.be * 0.03 / 2.54, type = 'R'))
+
+            self.append(Boule_coloree(0.72 * self.be, 0.44 * self.bs, r=1.3 * self.be * 0.03 / 2.54, type='R'))
+            self.append(Boule_coloree(0.72 * self.be, 0.5 * self.bs, r=1.3 * self.be * 0.03 / 2.54, type='N'))
+            self.append(Boule_coloree(0.72 * self.be, 0.56 * self.bs, r=1.3 * self.be * 0.03 / 2.54, type = 'J'))
+
+            self.append(Boule_coloree(0.68 * self.be, 0.47 * self.bs, r=1.3 * self.be * 0.03 / 2.54, type = 'J'))
+            self.append(Boule_coloree(0.68 * self.be, 0.53 * self.bs, r=1.3 * self.be * 0.03 / 2.54, type = 'R'))
+
+            self.append(Boule_coloree(0.64 * self.be, 0.5 * self.bs, r=1.3 * self.be * 0.03 / 2.54, type='R'))
+
 
 
     def proche_bord(self, posx, posy, i):
@@ -287,7 +326,7 @@ class Partie ():
         self.points = [0,0]  #en position 0, le joueur 2
         self.l = ll
         self.L= LL
-        self.plat = Plateau(l=self.l, L=self.L, mode = 1)
+        self.plat = Plateau(l=self.l, L=self.L, mode = mode)
 
     def jouer (self) :  #En réalité, cette fonction n'est jamais appelée dans l'ihm, car on a adapte le corps de la methode dans l'IHM
         """

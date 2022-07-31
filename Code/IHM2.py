@@ -8,7 +8,7 @@ from PyQt5.QtGui import QFont
 import numpy as np
 
 class JeuBillard2 (QtWidgets.QMainWindow):
-    def __init__(self, p1 = "joueur 1",p2 = "joueur 2", nb = 10, mode = 1):
+    def __init__(self, p1 = "joueur 1",p2 = "joueur 2", nb = 10, mode = 2):
         super().__init__()
 
         self.joueurs = [p1,p2]  #on recueille les données de la fenêtre d'initialisation
@@ -17,7 +17,11 @@ class JeuBillard2 (QtWidgets.QMainWindow):
         self.ui = Ui_mainWindow()  # ce qu'on a importé de Interface
         self.ui.setupUi(self)
 
-        pixmap = QtGui.QPixmap("../Images/carambole_m.jpg")  # on charge l'image d'arrière-plan
+
+        pixmap = QtGui.QPixmap("../Images/billard_americain_3.png")  # on charge l'image d'arrière-plan
+        pixmap = QtGui.QPixmap.scaledToHeight (pixmap, 900 )
+        pixmap = QtGui.QPixmap.scaledToWidth(pixmap, 1100)
+
         pal = QtGui.QPalette()
         pal.setBrush(QtGui.QPalette.Background, QtGui.QBrush(pixmap))
         self.ui.con.lower()
@@ -42,13 +46,13 @@ class JeuBillard2 (QtWidgets.QMainWindow):
 
         self.distx, self.disty = 0,0  # distance de la queue à la boule tirée (initialisée à 0)
 
-        self.table = Partie(self.nb_coups, 0.005, self.bx, self.by, mode) # On instancie la classe Partie, qui contient toutes
+        self.table = Partie(self.nb_coups, 0.005, self.bx, self.by, 2) # On instancie la classe Partie, qui contient toutes
         # les méthodes et variables d'instances nécessaires au fonctionnement du jeu de billard
 
         self.xp, self.yp = -3,-3  # on initialise ces valeurs à -3 car elles ne vaudront plus jamais -3 une fois la partie lancee :
         # permet à la fonction de dessin dessinJeu de voir qu'elle ne doit pas afficher le point de visée dès le lancement du jeu.
         self.xr, self.yr = 0,0
-        self.table.plat.queue.x, self.table.plat.queue.y = self.table.plat[self.i % 2].x + 86.2, self.table.plat[self.i % 2].y + 86.2
+        self.table.plat.queue.x, self.table.plat.queue.y = self.table.plat[0].x + 86.2, self.table.plat[0].y + 86.2
         # on place la queue sur la boule à tirer (avec une translation correspondant à l'écart fenêtre-widget, et à la bordure en bois
         # du billard.  = self.ehfw + self.bande_n
 
@@ -84,7 +88,7 @@ class JeuBillard2 (QtWidgets.QMainWindow):
             et avec un nouvel affichage (des boules, et du tableau de marque et du nombre de tours)
         """
 
-        self.table = Partie(self.nb_coups, 0.005, self.bx, self.by)  # On instancie la classe Partie, qui contient toutes les méthodes et variables
+        self.table = Partie(self.nb_coups, 0.005, self.bx, self.by, 2)  # On instancie la classe Partie, qui contient toutes les méthodes et variables
         #d'instances nécessaire au fonctionnement du jeu de billard
 
         self.ui.label0.setText("Tour {}/{}".format(self.table.c + 1, self.nb_coups))  # On précise le tour de jeu actuel
@@ -99,7 +103,7 @@ class JeuBillard2 (QtWidgets.QMainWindow):
 
         self.xp, self.yp, = -3, -3
         self.xr, self.yr = 0, 0
-        self.table.plat.queue.x, self.table.plat.queue.y = self.table.plat[self.i % 2].x + 86.2, self.table.plat[self.i % 2].y + 86.2
+        self.table.plat.queue.x, self.table.plat.queue.y = self.table.plat[0].x + 86.2, self.table.plat[0].y + 86.2
 
         self.ui.con.update()
 
@@ -136,7 +140,7 @@ class JeuBillard2 (QtWidgets.QMainWindow):
                 # la liste se remplira de 0 au fur et à mesure que les boules (représentées par leur indice dans la liste self.plateau
                 # seront considérés immobiles. si elle ne contient que des 0 (any(T)== False), le plateau est immobile, le tour est terminé.
 
-                Boule_blanche.impulsion(self.table.plat[self.i % 2], self.table.plat.queue.alpha_b, self.table.plat.queue.p)
+                Boule_blanche.impulsion(self.table.plat[0], self.table.plat.queue.alpha_b, self.table.plat.queue.p)
                 # on donne à la boule self.table.plat[self.i % 2] une vitesse de direction self.table.plat.queue.alpha_b et de norme self.table.plat.queue.p
 
                 self.posx, self.posy = [[] for i in range(self.table.plat.n)], [[] for i in range(self.table.plat.n)]
@@ -211,7 +215,7 @@ class JeuBillard2 (QtWidgets.QMainWindow):
                 self.ui.label0.show()
 
 
-            self.table.plat.queue.x , self.table.plat.queue.y = self.table.plat[self.i % 2].x+ 86.2, self.table.plat[self.i % 2].y + 86.2
+            self.table.plat.queue.x , self.table.plat.queue.y = self.table.plat[0].x+ 86.2, self.table.plat[0].y + 86.2
             # on place la queue à l'emplacement de la boule blanche que l'on souhaite ensuite taper :la même si le dernier coup a réussi, l'autre s'il a échoué.
 
             self.table.plat.queue.p = 0 # on réinitialise la puissance que l'on souhaite donner à la boule
@@ -272,7 +276,7 @@ class JeuBillard2 (QtWidgets.QMainWindow):
 
         if self.table.plat.queue.p == 0 :  # si la puissance p est nulle, c'est qu'on est en attente du coup suivant
 
-            boulex, bouley = self.table.plat[self.i % 2].x + 90, self.table.plat[self.i % 2].y + 88.2
+            boulex, bouley = self.table.plat[0].x + 90, self.table.plat[0].y + 88.2
             # TODO  la typiquement on a un modulo 2 qui est propre au mode français.
             # emplacement de la boule dans laquelle on tire
 
@@ -287,11 +291,11 @@ class JeuBillard2 (QtWidgets.QMainWindow):
 
             self.table.plat.queue.dessinimage(self.painter2, angle, boulex + distx, bouley + disty)
 
-            if self.xp != self.table.plat.queue.x and self.xp != self.table.plat[self.i % 2].x + 86.2 :
+            if self.xp != self.table.plat.queue.x and self.xp != self.table.plat[0].x + 86.2 :
                 self.table.plat.viseur.dessinimage(self.painter2, self.xp, self.yp)
             # permet de ne pas afficher le point de visée tant qu'on n'a pas cliqué
 
-        self.table.plat.point.dessinimage(self.painter, self.table.plat[self.i % 2].x, self.table.plat[self.i % 2].y)
+        self.table.plat.point.dessinimage(self.painter, self.table.plat[0].x, self.table.plat[0].y)
 
         self.painter.end()
         self.painter2.end()
@@ -388,6 +392,6 @@ def lim_coord_queue (dx,dy,lim):
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    window = JeuBillard()
+    window = JeuBillard2()
     window.show()
     app.exec_()
