@@ -9,7 +9,7 @@ Les commits, versions et branches suivantes seront des améliorations personnell
 
 . Penser à mettre des attributs privés etc, enfin voir comment il faudrait faire
 
-. Dans le plateau (racine du param) pouvoir changer le nombre de boule, que ça itère peut-importe le nombre
+. Dans le plateau (racine du param) pouvoir changer le nombre de boule, que ça itère peut-importe le nombre -> OK
 
 ## 2. Ajout du son 
 
