@@ -56,6 +56,37 @@ class Boule(metaclass = ABCMeta):  # une boule (blanche ou colorée), ses caract
         elif bord in ['O', 'E']:
             self.vx = - self.vx
 
+    def tombe(self, cpt):
+        """
+        simule un rebond sur une paroi droite. Actualise la vitesse de la boule après rebond.
+
+        entrée : string caractérisant la paroi sur laquelle il y a rebond (paroi nord, sud, est ou ouest)
+
+        sortie : la nouvelle vitesse de la boule, après rebond
+        """
+
+        if type (self) == Boule_blanche:
+            self.x = 214
+            self.y = 280
+            self.vx, self.vy = 0, 0
+            print("la boule blanche est tombée")
+        elif type (self) == Boule_coloree :
+            if self.type == "R" :
+                self.x = 400 - cpt
+                self.y = -50
+                self.vx, self.vy = 0, 0
+                print ("une boule rouge est tombée")
+            elif self.type == "J":
+                self.x = 540 + cpt
+                self.y = -50
+                self.vx, self.vy = 0, 0
+                print("une boule jaune est tombée")
+            else :
+                self.x = 5
+                self.y = 10
+                self.vx, self.vy = 0, 0
+                print("une boule noire est tombée")
+
 
     def coll(self, boule2):
         """
@@ -133,14 +164,12 @@ class Boule_coloree(Boule):
     def __init__(self, x, y, r = 0.03, type = 'R'):
         super().__init__(x, y,r)
         if type == "R":
-            self.image = QtGui.QImage("../Images/rouger.png")
-            self.type = "R"
+            self.image = QtGui.QImage("../Images/Brouge.png")
         elif type =="J":
-            self.image = QtGui.QImage("../Images/jauner.png")
-            self.type = "J"
+            self.image = QtGui.QImage("../Images/Bjaune.png")
         else :
-            self.image = QtGui.QImage("../Images/noirer.png")
-            self.type = "N"
+            self.image = QtGui.QImage("../Images/Bnoir.png")
+        self.type = type
 
     def dessinimage(self, qp):
         """
@@ -208,9 +237,11 @@ class Plateau(list):  # le plateau est un espace délimité, composé d'une list
             self.n = 3
             self.append(Boule_blanche(0.2 * self.be, 0.75 * self.bs, r= 1.3*self.be * 0.03 / 2.54))
             self.append(Boule_blanche(0.2 * self.be, 0.25 * self.bs, r=1.3*self.be * 0.03 / 2.54))
-            self.append(Boule_coloree(0.8 * self.be, 0.5 * self.bs, r=1.3*self.be * 0.03 / 2.54))
+            self.append(Boule_coloree(0.8 * self.be, 0.5 * self.bs, r=1.3*self.be * 0.03 / 2.54, type = "R"))
         else :
             self.n = 16
+            self.cpt_r = 0
+            self.cpt_j = 0
             self.append(Boule_blanche(0.2 * self.be, 0.5 * self.bs, r=1.3 * self.be * 0.03 / 2.54))
 
             self.append(Boule_coloree(0.8 * self.be, 0.38 * self.bs, r=1.3 * self.be * 0.03 / 2.54, type = 'R'))
@@ -259,6 +290,43 @@ class Plateau(list):  # le plateau est un espace délimité, composé d'une list
         elif self[i].y > self.bs * (1- 0.02):
             if len(posx[0]) <= 1 or posy[i][-2] < self[i].y:
                 Boule.rebond(self[i], 'S')
+
+    def proche_trous(self, posx, posy, i):
+        """
+        Si une boule est proche d'un trou, et que l'on constate que la boule se rapproche de ce trou,
+        la boule va tomber dans le trou, elle n'est plus dans la partie.
+
+        entrées :
+                posx, posy : liste des abscisses et ordonnées de toutes les boules du plateau
+                int i : l'indice de la boule dans la liste de boules (self.plateau), dont on veut vérifier la proximité du bord.
+
+        sortie  : None
+        """
+
+        if (self[i].x < 0.2*self.be) & ((self[i].y < 0.2*self.bs) | (self[i].y > self.bs * (1- 0.2))):  # on est proche d'un bord (ici le bord est)
+            if (len(posx[0]) <= 1) or (posx[i][-2] > self[i].x):  # on vérifie qu'on est pas en tout début de simulation,
+                if type (self[i]) == Boule_blanche :
+                    Boule.tombe(self[i],0)  # ou que l'on est pas déjà en train de repartir du bord
+                elif self[i].type == "R":
+                    Boule.tombe(self[i],self.cpt_r)
+                    self.cpt_r += 50
+                elif self[i].type == "J":
+                    Boule.tombe(self[i], self.cpt_j)
+                    self.cpt_j += 50
+                else :
+                    Boule.tombe(self[i], 0)
+        elif (self[i].x > self.be *(1- 0.2)) & ((self[i].y < 0.2*self.bs) | (self[i].y > self.bs * (1- 0.2))):
+            if len(posx[0]) <= 1 or posx[i][-2] < self[i].x:
+                if type(self[i]) == Boule_blanche:
+                    Boule.tombe(self[i], 0)  # ou que l'on est pas déjà en train de repartir du bord
+                elif self[i].type == "R":
+                    Boule.tombe(self[i], self.cpt_r)
+                    self.cpt_r += 50
+                elif self[i].type == "J":
+                    Boule.tombe(self[i], self.cpt_j)
+                    self.cpt_j += 50
+                else:
+                    Boule.tombe(self[i], 0)
 
 
     def collisions(self,col,i,j,n): #méthode récursive

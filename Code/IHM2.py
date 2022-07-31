@@ -18,7 +18,7 @@ class JeuBillard2 (QtWidgets.QMainWindow):
         self.ui.setupUi(self)
 
 
-        pixmap = QtGui.QPixmap("../Images/billard_americain_3.png")  # on charge l'image d'arrière-plan
+        pixmap = QtGui.QPixmap("../Images/billard_americain.png")  # on charge l'image d'arrière-plan
         pixmap = QtGui.QPixmap.scaledToHeight (pixmap, 900 )
         pixmap = QtGui.QPixmap.scaledToWidth(pixmap, 1100)
 
@@ -161,6 +161,10 @@ class JeuBillard2 (QtWidgets.QMainWindow):
              """
 
         if any(self.MVT):  #tant qu'une boule au moins est en mouvement
+
+            for i in range(self.table.plat.n):
+                Plateau.proche_trous(self.table.plat, self.posx, self.posy, i)  # enlève la boule de la liste si oui, mais dans un premier temps print un truc
+
             for i in range(self.table.plat.n):
                 Plateau.proche_bord(self.table.plat, self.posx, self.posy, i)  # on gère les rebonds sur les bords
 

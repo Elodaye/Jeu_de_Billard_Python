@@ -112,6 +112,9 @@ class Window_Menu (QtWidgets.QMainWindow) :
         p1 = self.prenom1.text()
         p2 = self.prenom2.text()
         nb = self.nb_tour.text()
+        p1 = "Elo"
+        p2 = "Mat"
+        nb = "20"
         mode = self.mode
         try :
             nb = int (nb)
