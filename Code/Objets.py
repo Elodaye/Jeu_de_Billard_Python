@@ -240,8 +240,7 @@ class Plateau(list):  # le plateau est un espace délimité, composé d'une list
             self.append(Boule_coloree(0.8 * self.be, 0.5 * self.bs, r=1.3*self.be * 0.03 / 2.54, type = "R"))
         else :
             self.n = 16
-            self.cpt_r = 0
-            self.cpt_j = 0
+            self.cpt = [0, 0, 0, 0]
             self.append(Boule_blanche(0.2 * self.be, 0.5 * self.bs, r=1.3 * self.be * 0.03 / 2.54))
 
             self.append(Boule_coloree(0.8 * self.be, 0.38 * self.bs, r=1.3 * self.be * 0.03 / 2.54, type = 'R'))
@@ -303,31 +302,34 @@ class Plateau(list):  # le plateau est un espace délimité, composé d'une list
         sortie  : None
         """
 
-        if (self[i].x < 0.2*self.be) & ((self[i].y < 0.2*self.bs) | (self[i].y > self.bs * (1- 0.2))):  # on est proche d'un bord (ici le bord est)
+        if (self[i].x < 0.1*self.be) & ((self[i].y < 0.1*self.bs) | (self[i].y > self.bs * (1- 0.1))):  # on est proche d'un bord (ici le bord est)
             if (len(posx[0]) <= 1) or (posx[i][-2] > self[i].x):  # on vérifie qu'on est pas en tout début de simulation,
                 if type (self[i]) == Boule_blanche :
                     Boule.tombe(self[i],0)  # ou que l'on est pas déjà en train de repartir du bord
+                    self.cpt[3] += 1
                 elif self[i].type == "R":
-                    Boule.tombe(self[i],self.cpt_r)
-                    self.cpt_r += 50
+                    Boule.tombe(self[i],50* self.cpt[0])
+                    self.cpt[0] += 1
                 elif self[i].type == "J":
-                    Boule.tombe(self[i], self.cpt_j)
-                    self.cpt_j += 50
+                    Boule.tombe(self[i], 50 * self.cpt[1])
+                    self.cpt[1] += 1
                 else :
                     Boule.tombe(self[i], 0)
-        elif (self[i].x > self.be *(1- 0.2)) & ((self[i].y < 0.2*self.bs) | (self[i].y > self.bs * (1- 0.2))):
+                    self.cpt[2] += 1
+        elif (self[i].x > self.be *(1- 0.1)) & ((self[i].y < 0.1*self.bs) | (self[i].y > self.bs * (1- 0.1))):
             if len(posx[0]) <= 1 or posx[i][-2] < self[i].x:
                 if type(self[i]) == Boule_blanche:
                     Boule.tombe(self[i], 0)  # ou que l'on est pas déjà en train de repartir du bord
+                    self.cpt[3] += 1
                 elif self[i].type == "R":
-                    Boule.tombe(self[i], self.cpt_r)
-                    self.cpt_r += 50
+                    Boule.tombe(self[i], 50 * self.cpt[0])
+                    self.cpt[0] += 1
                 elif self[i].type == "J":
-                    Boule.tombe(self[i], self.cpt_j)
-                    self.cpt_j += 50
+                    Boule.tombe(self[i], 50* self.cpt[1])
+                    self.cpt[1] += 1
                 else:
                     Boule.tombe(self[i], 0)
-
+                    self.cpt[2] += 1
 
     def collisions(self,col,i,j,n): #méthode récursive
         """"
@@ -398,31 +400,31 @@ class Partie ():
         self.L= LL
         self.plat = Plateau(l=self.l, L=self.L, mode = mode)
 
-    def jouer (self) :  #En réalité, cette fonction n'est jamais appelée dans l'ihm, car on a adapte le corps de la methode dans l'IHM
-        """
-        On simule une partie: une succession de coup, effectués par l'un ou l'autre des joueurs.
-        """
-
-        i = 1
-        while self.c < self.nb_coups :  # il reste encore des coups à jouer
-            self.c+=1
-            ANA = [self.plat[i%2 -1].vx,self.plat[i%2 -1].vy, self.plat[i%2 -2].vx, self.plat[i%2 -2].vy]  #position avant le tir des boules à toucher
-            Plateau.un_coup (self.plat, self.dt,i %2)
-            if ANA[0] - self.plat[i%2 -1].vx == 0 and ANA [1] - self.plat[i%2 -1].vy and ANA[2] - self.plat[i%2 -2].vx == 0 and ANA [3] - self.plat[i%2 -3].vy ==0 :
-                print ("Vous avez marqué un point")  # les coordonnées des 2 boules ont changé, on a réussi le coup
-                self.points [i %2] += 1
-            else :
-                print ("Pas de chance... Au joueur suivant")
-                i += 1
-        print ("Joueur 1 : {} points /n Joueur 2 : {} points ".format (self.points[1], self.points[0]))
-        if self.points[0] != self.points[1]:
-            if self.points [0] > self.points [1]:
-                g = '2'
-            elif self.points [0] > self.points [1]:
-                g = '1'
-            print ("Le joueur {} a gagné ! Félicitations !".format (g))
-        else :
-            print ("Egalité ! Bravo à vous deux !")
+    # def jouer (self) :  #En réalité, cette fonction n'est jamais appelée dans l'ihm, car on a adapte le corps de la methode dans l'IHM
+    #     """
+    #     On simule une partie: une succession de coup, effectués par l'un ou l'autre des joueurs.
+    #     """
+    #
+    #     i = 1
+    #     while self.c < self.nb_coups :  # il reste encore des coups à jouer
+    #         self.c+=1
+    #         ANA = [self.plat[i%2 -1].vx,self.plat[i%2 -1].vy, self.plat[i%2 -2].vx, self.plat[i%2 -2].vy]  #position avant le tir des boules à toucher
+    #         Plateau.un_coup (self.plat, self.dt,i %2)
+    #         if ANA[0] - self.plat[i%2 -1].vx == 0 and ANA [1] - self.plat[i%2 -1].vy and ANA[2] - self.plat[i%2 -2].vx == 0 and ANA [3] - self.plat[i%2 -3].vy ==0 :
+    #             print ("Vous avez marqué un point")  # les coordonnées des 2 boules ont changé, on a réussi le coup
+    #             self.points [i %2] += 1
+    #         else :
+    #             print ("Pas de chance... Au joueur suivant")
+    #             i += 1
+    #     print ("Joueur 1 : {} points /n Joueur 2 : {} points ".format (self.points[1], self.points[0]))
+    #     if self.points[0] != self.points[1]:
+    #         if self.points [0] > self.points [1]:
+    #             g = '2'
+    #         elif self.points [0] > self.points [1]:
+    #             g = '1'
+    #         print ("Le joueur {} a gagné ! Félicitations !".format (g))
+    #     else :
+    #         print ("Egalité ! Bravo à vous deux !")
 
 class Queue ():
 

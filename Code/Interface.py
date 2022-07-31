@@ -56,6 +56,12 @@ class Ui_mainWindow(object):
         spacerItem2 = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem2)
 
+        self.label3 = QtWidgets.QLabel(self.horizontalLayoutWidget)
+        self.label3.setObjectName("label3")
+        self.horizontalLayout_2.addWidget(self.label3)
+        spacerItem3 = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem3)
+
         self.Bouton_Quitter = QtWidgets.QPushButton(self.horizontalLayoutWidget)
         self.Bouton_Quitter.setObjectName("Bouton_Quitter")
         self.Bouton_Quitter.setFixedSize(100,50)

@@ -12,7 +12,6 @@ class JeuBillard2 (QtWidgets.QMainWindow):
         super().__init__()
 
         self.joueurs = [p1,p2]  #on recueille les données de la fenêtre d'initialisation
-        self.nb_coups = nb
 
         self.ui = Ui_mainWindow()  # ce qu'on a importé de Interface
         self.ui.setupUi(self)
@@ -46,7 +45,7 @@ class JeuBillard2 (QtWidgets.QMainWindow):
 
         self.distx, self.disty = 0,0  # distance de la queue à la boule tirée (initialisée à 0)
 
-        self.table = Partie(self.nb_coups, 0.005, self.bx, self.by, 2) # On instancie la classe Partie, qui contient toutes
+        self.table = Partie(10, 0.005, self.bx, self.by, 2) # On instancie la classe Partie, qui contient toutes
         # les méthodes et variables d'instances nécessaires au fonctionnement du jeu de billard
 
         self.xp, self.yp = -3,-3  # on initialise ces valeurs à -3 car elles ne vaudront plus jamais -3 une fois la partie lancee :
@@ -55,6 +54,8 @@ class JeuBillard2 (QtWidgets.QMainWindow):
         self.table.plat.queue.x, self.table.plat.queue.y = self.table.plat[0].x + 86.2, self.table.plat[0].y + 86.2
         # on place la queue sur la boule à tirer (avec une translation correspondant à l'écart fenêtre-widget, et à la bordure en bois
         # du billard.  = self.ehfw + self.bande_n
+
+        self.cpt_ant = [0,0,0,0]
 
         self.ui.con.update()
 
@@ -69,16 +70,22 @@ class JeuBillard2 (QtWidgets.QMainWindow):
 
         self.ui.label.setFont(QFont ('Helvetica',10.5))
 
-        self.ui.label2.setFont(QFont('Helvetica', 10))
+        self.ui.label2.setFont(QFont('Helvetica', 11.5))
+        self.ui.label3.setFont(QFont('Helvetica', 11.5))
 
-        self.ui.label0.setText("Tour {}/{}".format(self.table.c + 1, self.nb_coups))  # On précise le tour de jeu actuel
+        self.ui.label0.setText("Tour {}".format(self.table.c + 1))  # On précise le tour de jeu actuel
         self.ui.label0.show()
 
         self.ui.label.setText("Tour {}. \nC'est à {} de jouer.".format(self.table.c +1, self.joueurs [self.i % 2]))
         self.ui.label.show()    # Narration de la partie
 
-        self.ui.label2.setText("{} : {} \n{} : {} ".format(self.joueurs[1], self.table.points[1], self.joueurs[0], self.table.points[0]))
-        self.ui.label2.show()   # on affiche le tableau de marque
+        self.ui.label2.setText("{} : {} ".format(self.joueurs[1], self.table.points[1]))
+        self.ui.label2.setStyleSheet("color: yellow")
+        self.ui.label2.show()
+
+        self.ui.label3.setText("{} : {} ".format(self.joueurs[0], self.table.points[0]))
+        self.ui.label3.setStyleSheet("color: red")
+        self.ui.label3.show()
 
 
     def demarrer(self):
@@ -88,18 +95,22 @@ class JeuBillard2 (QtWidgets.QMainWindow):
             et avec un nouvel affichage (des boules, et du tableau de marque et du nombre de tours)
         """
 
-        self.table = Partie(self.nb_coups, 0.005, self.bx, self.by, 2)  # On instancie la classe Partie, qui contient toutes les méthodes et variables
+        self.table = Partie(10, 0.005, self.bx, self.by, 2)  # On instancie la classe Partie, qui contient toutes les méthodes et variables
         #d'instances nécessaire au fonctionnement du jeu de billard
 
-        self.ui.label0.setText("Tour {}/{}".format(self.table.c + 1, self.nb_coups))  # On précise le tour de jeu actuel
+        self.ui.label0.setText("Tour {}".format(self.table.c + 1))  # On précise le tour de jeu actuel
         self.ui.label0.show()
 
         self.ui.label.setText("Nouvelle partie \nTour {}. \nC'est à {} de jouer.".format(self.table.c + 1, self.joueurs[self.i % 2]))
         self.ui.label.show()  # Narration de la partie
 
-        self.ui.label2.setText( "{} : {} \n{} : {} ".format(self.joueurs[1], self.table.points[1],
-                                                            self.joueurs[0], self.table.points[0]))
-        self.ui.label2.show()  # on affiche la table de marque
+        self.ui.label2.setText("{} : {} ".format(self.joueurs[1], self.table.points[1]))
+        self.ui.label2.setStyleSheet("color: yellow")
+        self.ui.label2.show()
+
+        self.ui.label3.setText("{} : {} ".format(self.joueurs[0], self.table.points[0]))
+        self.ui.label3.setStyleSheet("color: red")
+        self.ui.label3.show()
 
         self.xp, self.yp, = -3, -3
         self.xr, self.yr = 0, 0
@@ -119,22 +130,26 @@ class JeuBillard2 (QtWidgets.QMainWindow):
 
         else :
 
-            if self.table.c < self.table.nb_coups:
+            if (self.table.plat.cpt[0] < 7 ) & (self.table.plat.cpt[1]  < 7):  ## on se fiche de qui gagne, juste savoir si on continue à jouer
                 self.table.c += 1
                 x1, y1, x2, y2 = self.table.plat[self.i % 2 - 1].x, self.table.plat[self.i % 2 - 1].y, self.table.plat[
                     self.i % 2 - 2].x, self.table.plat[self.i % 2 - 2].y
 
                 self.ANA = [x1, y1, x2, y2]  # on enregistre l'emplacement initial (avant tir) des boules que l'on doit toucher s'il on veut gagner un point
 
-                self.ui.label0.setText("Tour {}/{}".format(self.table.c , self.nb_coups))
+                self.ui.label0.setText("Tour {}".format(self.table.c))
                 self.ui.label0.show()
 
                 self.ui.label.setText("Tour {}. \nC'est à {} de jouer.".format(self.table.c, self.joueurs[self.i % 2]))
                 self.ui.label.show()
 
-                self.ui.label2.setText("{} : {} \n{} : {}".format(self.joueurs[1], self.table.points[1], self.joueurs[0],
-                                                                   self.table.points[0]))
+                self.ui.label2.setText("{} : {} ".format(self.joueurs[1], self.table.points[1]))
+                self.ui.label2.setStyleSheet("color: yellow")
                 self.ui.label2.show()
+
+                self.ui.label3.setText("{} : {} ".format(self.joueurs[0], self.table.points[0]))
+                self.ui.label3.setStyleSheet("color: red")
+                self.ui.label3.show()
 
                 self.MVT = np.array([1 for i in range(self.table.plat.n)])
                 # la liste se remplira de 0 au fur et à mesure que les boules (représentées par leur indice dans la liste self.plateau
@@ -163,7 +178,8 @@ class JeuBillard2 (QtWidgets.QMainWindow):
         if any(self.MVT):  #tant qu'une boule au moins est en mouvement
 
             for i in range(self.table.plat.n):
-                Plateau.proche_trous(self.table.plat, self.posx, self.posy, i)  # enlève la boule de la liste si oui, mais dans un premier temps print un truc
+                if self.MVT[i] != 0 :
+                    Plateau.proche_trous(self.table.plat, self.posx, self.posy, i)  # enlève la boule de la liste si oui, mais dans un premier temps print un truc
 
             for i in range(self.table.plat.n):
                 Plateau.proche_bord(self.table.plat, self.posx, self.posy, i)  # on gère les rebonds sur les bords
@@ -183,27 +199,45 @@ class JeuBillard2 (QtWidgets.QMainWindow):
             self.timer.stop()
             self.ui.con.update()
 
+            self.table.points[0] = self.table.plat.cpt[0]  # le joueur marque un point
+            self.table.points[1] = self.table.plat.cpt[1]
+
             for i in range(self.table.plat.n):
                 self.table.plat[i].vx, self.table.plat[i].vy = 0, 0  # on arrête les billes, puisque qu'elle ne sont pas immobiles,
                 # mais seulement mobiles avec une vitesse inférieure à eps (dans la fonction evolution)
 
-            if self.ANA[0] - self.table.plat[self.i % 2 - 1].x != 0 and self.ANA[1] - self.table.plat[self.i % 2 - 1].y  !=0 and self.ANA[2] - \
-                self.table.plat[self.i % 2 - 2].x != 0 and self.ANA[3] - self.table.plat[self.i % 2 - 2].y != 0:
+            # if self.ANA[0] - self.table.plat[self.i % 2 - 1].x != 0 and self.ANA[1] - self.table.plat[self.i % 2 - 1].y  !=0 and self.ANA[2] - \
+            #     self.table.plat[self.i % 2 - 2].x != 0 and self.ANA[3] - self.table.plat[self.i % 2 - 2].y != 0:
+
+            if (self.table.plat.cpt[self.i %2] > self.cpt_ant[self.i %2]) and (self.table.plat.cpt[(self.i +1) %2] == self.cpt_ant[(self.i +1) %2])  and (self.table.plat.cpt[2] == self.cpt_ant[2]) and (self.table.plat.cpt[3] == self.cpt_ant[3]):
+
+            ## TODO changer la condition qui dit qu'on rejoue : si on a mit une de nos boules dans le trou, et pas la noir, et pas la blanche
             # On regarde si les coordonnées des 2 boules visées ont évolué, ie si la boule de tire à bien touché les 2 autres
 
                 self.ui.label.setText("Vous avez marqué un point ! C'est encore à vous de jouer")
                 self.ui.label.show()
 
-                self.table.points[self.i % 2] += 1 # le joueur marque un point
-
-                self.ui.label2.setText(
-                    "{} : {} \n{} : {} ".format(self.joueurs[1], self.table.points[1], self.joueurs[0], self.table.points[0]))
+                self.ui.label2.setText("{} : {} ".format(self.joueurs[1], self.table.points[1]))
+                self.ui.label2.setStyleSheet("color: yellow")
                 self.ui.label2.show()
+
+                self.ui.label3.setText("{} : {} ".format(self.joueurs[0], self.table.points[0]))
+                self.ui.label3.setStyleSheet("color: red")
+                self.ui.label3.show()
                 # on met à jour l'affichage du tableau de score
 
-                self.ui.label0.setText("Tour {}/{}".format(self.table.c + 1, self.nb_coups))
+                self.ui.label0.setText("Tour {}".format(self.table.c + 1))
                 self.ui.label0.show()
 
+            #elif :
+               # si on a mis une boule de l'adversaire ou la blanche :
+            #self.i += 1  # c'est au joueur suivant de jouer -> va aider à changer la boule que l'on tape
+
+            #self.ui.label.setText(("Pas de chance... C'est à {} de jouer.").format(self.joueurs[self.i % 2]))
+            #self.ui.label.show()
+
+            #elif :
+                # si on a mis la boule noir le jeu est fini, l'adversaire à gagner
             else:
 
                 self.i += 1  # c'est au joueur suivant de jouer -> va aider à changer la boule que l'on tape
@@ -211,13 +245,18 @@ class JeuBillard2 (QtWidgets.QMainWindow):
                 self.ui.label.setText(("Pas de chance... C'est à {} de jouer.").format(self.joueurs[self.i % 2]))
                 self.ui.label.show()
 
-                self.ui.label2.setText("{} : {} \n{} : {} ".format(self.joueurs[1], self.table.points[1], self.joueurs[0],
-                                                self.table.points[0]))
+                self.ui.label2.setText("{} : {} ".format(self.joueurs[1], self.table.points[1]))
+                self.ui.label2.setStyleSheet("color: yellow")
                 self.ui.label2.show()
 
-                self.ui.label0.setText("Tour {}/{}".format(self.table.c+1, self.nb_coups))
+                self.ui.label3.setText("{} : {} ".format(self.joueurs[0], self.table.points[0]))
+                self.ui.label3.setStyleSheet("color: red")
+                self.ui.label3.show()
+
+                self.ui.label0.setText("Tour {}".format(self.table.c+1))
                 self.ui.label0.show()
 
+            self.cpt_ant = [self.table.plat.cpt[0], self.table.plat.cpt[1], self.table.plat.cpt[2], self.table.plat.cpt[3]]
 
             self.table.plat.queue.x , self.table.plat.queue.y = self.table.plat[0].x+ 86.2, self.table.plat[0].y + 86.2
             # on place la queue à l'emplacement de la boule blanche que l'on souhaite ensuite taper :la même si le dernier coup a réussi, l'autre s'il a échoué.
@@ -232,37 +271,32 @@ class JeuBillard2 (QtWidgets.QMainWindow):
 
             self.ui.con.update()
 
-            if self.table.c >= self.table.nb_coups:  # on vient de jouer le dernier coup de la partie, on regarde maintenant qui a gagné.
+            if (self.table.plat.cpt[0]  >= 7 ) | (self.table.plat.cpt[0]  >= 7):  # on vient de jouer le dernier coup de la partie, on regarde maintenant qui a gagné.
 
                 self.ui.label.setText("{} : {} points \n{} : {} points ".format(self.joueurs[1], self.table.points[1], self.joueurs[0],
                                                               self.table.points[0]))
                 self.ui.label.show()
 
-                self.ui.label0.setText("Tour {}/{}".format(self.table.c, self.nb_coups))
+                self.ui.label0.setText("Tour {}".format(self.table.c))
                 self.ui.label0.show()
 
-                if self.table.points[0] != self.table.points[1]:
-                    if self.table.points[0] > self.table.points[1]:
-                        g = 0
-                    else:
-                        g = 1
-                    self.ui.label.setText("{} : {} points, {} : {} points. \n{} a gagné ! Félicitations ! ".format(self.joueurs[1],
+                if self.table.points[0] > self.table.points[1]:
+                    g = 0
+                else:
+                    g = 1
+
+                self.ui.label.setText("{} : {} points, {} : {} points. \n{} a gagné ! Félicitations ! ".format(self.joueurs[1],
                                         self.table.points[1], self.joueurs[0], self.table.points[0],self.joueurs[g]))
 
-                    self.ui.label.show()
+                self.ui.label.show()
 
-                    self.ui.label2.setText( "{} : {} \n{} : {} ".format(self.joueurs[1], self.table.points[1], self.joueurs[0],
-                                                    self.table.points[0]))
-                    self.ui.label2.show()
+                self.ui.label2.setText("{} : {} ".format(self.joueurs[1], self.table.points[1]))
+                self.ui.label2.setStyleSheet("color: yellow")
+                self.ui.label2.show()
 
-                else:
-                    self.ui.label.setText( "{} : {} points \n{} : {} points. \nEgalité ! Bravo à vous deux ! ".format(
-                                            self.joueurs[1], self.table.points[1], self.joueurs[0], self.table.points[0]))
-                    self.ui.label.show()
-
-                    self.ui.label2.setText("{} : {} \n{} : {} ".format(self.joueurs[1], self.table.points[1], self.joueurs[0],
-                                                    self.table.points[0]))
-                    self.ui.label2.show()
+                self.ui.label3.setText("{} : {} ".format(self.joueurs[0], self.table.points[0]))
+                self.ui.label3.setStyleSheet("color: red")
+                self.ui.label3.show()
 
 
     def dessinJeu(self,*args):
@@ -399,3 +433,6 @@ if __name__ == "__main__":
     window = JeuBillard2()
     window.show()
     app.exec_()
+
+## retirer le nombre de tour qui n'est pas pertinant ici
+## mettre plutôt un compteur de chaque boule présente sur le plateau, et quand y'en a plus d'une couleur, le joueur a gagné
