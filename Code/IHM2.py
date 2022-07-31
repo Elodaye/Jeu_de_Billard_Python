@@ -56,6 +56,7 @@ class JeuBillard2 (QtWidgets.QMainWindow):
         # du billard.  = self.ehfw + self.bande_n
 
         self.cpt_ant = [0,0,0,0]
+        self.faute = 0
 
         self.ui.con.update()
 
@@ -130,7 +131,7 @@ class JeuBillard2 (QtWidgets.QMainWindow):
 
         else :
 
-            if (self.table.plat.cpt[0] < 7 ) & (self.table.plat.cpt[1]  < 7):  ## on se fiche de qui gagne, juste savoir si on continue à jouer
+            if (self.table.plat.cpt[0] < 7 ) & (self.table.plat.cpt[1]  < 7) & (self.table.plat.cpt[2] != 1):  ## on se fiche de qui gagne, juste savoir si on continue à jouer
                 self.table.c += 1
                 x1, y1, x2, y2 = self.table.plat[self.i % 2 - 1].x, self.table.plat[self.i % 2 - 1].y, self.table.plat[
                     self.i % 2 - 2].x, self.table.plat[self.i % 2 - 2].y
@@ -214,6 +215,7 @@ class JeuBillard2 (QtWidgets.QMainWindow):
             ## TODO changer la condition qui dit qu'on rejoue : si on a mit une de nos boules dans le trou, et pas la noir, et pas la blanche
             # On regarde si les coordonnées des 2 boules visées ont évolué, ie si la boule de tire à bien touché les 2 autres
 
+                self.faute = 0
                 self.ui.label.setText("Vous avez marqué un point ! C'est encore à vous de jouer")
                 self.ui.label.show()
 
@@ -239,11 +241,22 @@ class JeuBillard2 (QtWidgets.QMainWindow):
             #elif :
                 # si on a mis la boule noir le jeu est fini, l'adversaire à gagner
             else:
+                if (self.table.plat.cpt[3] > self.cpt_ant[3]) or (self.table.plat.cpt[(self.i +1) %2] > self.cpt_ant[(self.i +1) %2]):
+                    self.ui.label.setText(("Faute de jeu... C'est à {} de jouer.").format(self.joueurs[(self.i+1) % 2]))
+                    self.ui.label.show()
+                    self.faute = 1
+                    self.i += 1  # c'est au joueur suivant de jouer -> va aider à changer la boule que l'on tape
 
-                self.i += 1  # c'est au joueur suivant de jouer -> va aider à changer la boule que l'on tape
+                else :
 
-                self.ui.label.setText(("Pas de chance... C'est à {} de jouer.").format(self.joueurs[self.i % 2]))
-                self.ui.label.show()
+                    if self.faute :
+                        self.ui.label.setText(("Il vous reste un coup !"))
+                        self.ui.label.show()
+                        self.faute = 0
+                    else :
+                        self.ui.label.setText(("Tour {}... C'est à {} de jouer.").format(self.table.c + 1, self.joueurs[(self.i +1) % 2]))
+                        self.ui.label.show()
+                        self.i += 1
 
                 self.ui.label2.setText("{} : {} ".format(self.joueurs[1], self.table.points[1]))
                 self.ui.label2.setStyleSheet("color: yellow")
@@ -271,7 +284,20 @@ class JeuBillard2 (QtWidgets.QMainWindow):
 
             self.ui.con.update()
 
-            if (self.table.plat.cpt[0]  >= 7 ) | (self.table.plat.cpt[0]  >= 7):  # on vient de jouer le dernier coup de la partie, on regarde maintenant qui a gagné.
+            if  (self.table.plat.cpt[2] == 1 ):
+                self.ui.label.setText("{} a mis la boule noire... \n{} a gagné ! Félicitations ! ".format(self.joueurs [(self.i +1) %2],self.joueurs[self.i %2]))
+
+                self.ui.label.show()
+
+                self.ui.label2.setText("{} : {} ".format(self.joueurs[1], self.table.points[1]))
+                self.ui.label2.setStyleSheet("color: yellow")
+                self.ui.label2.show()
+
+                self.ui.label3.setText("{} : {} ".format(self.joueurs[0], self.table.points[0]))
+                self.ui.label3.setStyleSheet("color: red")
+                self.ui.label3.show()
+
+            elif (self.table.plat.cpt[0]  >= 7 ) | (self.table.plat.cpt[0]  >= 7):  # on vient de jouer le dernier coup de la partie, on regarde maintenant qui a gagné.
 
                 self.ui.label.setText("{} : {} points \n{} : {} points ".format(self.joueurs[1], self.table.points[1], self.joueurs[0],
                                                               self.table.points[0]))
