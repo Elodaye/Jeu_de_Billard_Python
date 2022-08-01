@@ -11,8 +11,15 @@ Les commits, versions et branches suivantes seront des améliorations personnell
 
 . Dans le plateau (racine du param) pouvoir changer le nombre de boule, que ça itère peut-importe le nombre -> OK
 
+Il faut mettre un petit point de la couleur de a qui c'est de jouer -> OK
+
 ## 2. Ajout du son 
 
-## 3. Ajout d'un interface pour choisir le mode de jeu
+## 3. Ajout d'un interface pour choisir le mode de jeu -> ok
 
 ## 4. Nouveau mode de jeu, billard classique
+Reste plus qu'à mettre le billard au bon endroit, graphiquement 
+
+## factoriser le code, héritage. 
+
+Bien remplir le readme pour montrer comment ça fonctionne et ce qu'on a fait 

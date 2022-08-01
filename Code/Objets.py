@@ -231,6 +231,7 @@ class Plateau(list):  # le plateau est un espace délimité, composé d'une list
         self.queue = Queue()
         self.point = Point()
         self.viseur = Point_clique() #3 instances des classes définies juste apres
+        self.Lb = []
 
         #On joue uniquement dans le mode normal, avec deux boules blanches et une rouge, placées de maniere precise au debut de la partie:
         if mode == 1:
@@ -345,7 +346,8 @@ class Plateau(list):  # le plateau est un espace délimité, composé d'une list
         # Si elle est trop faible, il y a collision, donc échange de quantité de mvt
 
         #Col se remplit au fur et à mesure des appels recursifs quand des boules sont proches
-
+        if (i==1) & (j==0) :
+            self.Lb = []
         if n == len(self) * (len(self)-1)/2 :
             for [i, j] in col:
                 Boule.coll(self[i], self[j])
@@ -353,6 +355,9 @@ class Plateau(list):  # le plateau est un espace délimité, composé d'une list
         else :
             if ((self[i].x - self[j].x) ** 2 + (self[i].y - self[j].y) ** 2) ** 0.5 <= self[i].r*(1+0.002) + self[j].r:
                     col.append([i, j])  # boules trop proches, leur trajectoire va être déviée par la collision (méthode coll)
+                    if j == 0 :
+                        if type(self[i]) !=  Boule_blanche:
+                            self.Lb.append (self[i].type)
             if j+ 1 == i :
                 return self.collisions(col,i+1,0,n+1)
             return self.collisions(col,i,j+1, n+1)
@@ -457,9 +462,9 @@ class Queue ():
         qp.drawImage(QtCore.QRect(boulex-290 -21.5, bouley-285 -24.2, 600, 600) ,self.l)
 
 class Point ():
-    image = QtGui.QImage("../Images/point2.png")
+    #image = QtGui.QImage("../Images/point2.png")
 
-    def dessinimage(self, qp, boulex,bouley):
+    def dessinimage(self, qp, boulex,bouley, i=0):
         """
         Affiche le point rouge se situant au centre de la boule blanche dans laquelle il faut tirer avec la canne.
 
@@ -468,8 +473,11 @@ class Point ():
 
         sortie  : 1 si la boule est considérée immobile, 0 si elle est en mouvement.
         """
-
-        qp.drawImage(QtCore.QRect(boulex +93 -23 , bouley+95 -24.6, 10, 10), self.image)
+        if i == 0 :
+            image = QtGui.QImage("../Images/pointR.png")
+        else :
+            image = QtGui.QImage("../Images/pointJ.png")
+        qp.drawImage(QtCore.QRect(boulex +93 -23 , bouley+95 -24.6, 10, 10), image)
 
 class Point_clique ():
     image = QtGui.QImage("../Images/point_clique2.png")

@@ -57,6 +57,8 @@ class JeuBillard2 (QtWidgets.QMainWindow):
 
         self.cpt_ant = [0,0,0,0]
         self.faute = 0
+        self.couleurs = ["R", "J"]
+        self.LB = []
 
         self.ui.con.update()
 
@@ -159,6 +161,7 @@ class JeuBillard2 (QtWidgets.QMainWindow):
                 Boule_blanche.impulsion(self.table.plat[0], self.table.plat.queue.alpha_b, self.table.plat.queue.p)
                 # on donne à la boule self.table.plat[self.i % 2] une vitesse de direction self.table.plat.queue.alpha_b et de norme self.table.plat.queue.p
 
+                self.LB = []
                 self.posx, self.posy = [[] for i in range(self.table.plat.n)], [[] for i in range(self.table.plat.n)]
 
                 for i in range(self.table.plat.n):     # pour garder en mémoire les positions passées (pour la fonction rebond)
@@ -187,6 +190,8 @@ class JeuBillard2 (QtWidgets.QMainWindow):
 
             Plateau.collisions(self.table.plat,[],1,0,0)  # on gère les collisions entre boules
 
+            self.LB = self.LB + self.table.plat.Lb
+
             for i in range(self.table.plat.n):
                 self.MVT[i] = Boule.evolution(self.table.plat[i], self.table.dt, self.table.plat.k, 0.05 * self.table.plat.be)
                 # détermination de la nouvelle position et vitesse de chaque boule, en mouvement rectiligne maintenant que l'impact de l'environnement a ét été traité.
@@ -210,7 +215,7 @@ class JeuBillard2 (QtWidgets.QMainWindow):
             # if self.ANA[0] - self.table.plat[self.i % 2 - 1].x != 0 and self.ANA[1] - self.table.plat[self.i % 2 - 1].y  !=0 and self.ANA[2] - \
             #     self.table.plat[self.i % 2 - 2].x != 0 and self.ANA[3] - self.table.plat[self.i % 2 - 2].y != 0:
 
-            if (self.table.plat.cpt[self.i %2] > self.cpt_ant[self.i %2]) and (self.table.plat.cpt[(self.i +1) %2] == self.cpt_ant[(self.i +1) %2])  and (self.table.plat.cpt[2] == self.cpt_ant[2]) and (self.table.plat.cpt[3] == self.cpt_ant[3]):
+            if (self.table.plat.cpt[self.i %2] > self.cpt_ant[self.i %2]) and (self.table.plat.cpt[(self.i +1) %2] == self.cpt_ant[(self.i +1) %2])  and (self.table.plat.cpt[2] == self.cpt_ant[2]) and (self.table.plat.cpt[3] == self.cpt_ant[3]) and (self.LB[0] == self.couleurs[self.i %2]):
 
             ## TODO changer la condition qui dit qu'on rejoue : si on a mit une de nos boules dans le trou, et pas la noir, et pas la blanche
             # On regarde si les coordonnées des 2 boules visées ont évolué, ie si la boule de tire à bien touché les 2 autres
@@ -241,7 +246,9 @@ class JeuBillard2 (QtWidgets.QMainWindow):
             #elif :
                 # si on a mis la boule noir le jeu est fini, l'adversaire à gagner
             else:
-                if (self.table.plat.cpt[3] > self.cpt_ant[3]) or (self.table.plat.cpt[(self.i +1) %2] > self.cpt_ant[(self.i +1) %2]):
+                print (self.LB)
+                print (self.LB[0], self.couleurs[self.i %2])
+                if (self.table.plat.cpt[3] > self.cpt_ant[3]) or (self.table.plat.cpt[(self.i +1) %2] > self.cpt_ant[(self.i +1) %2]) or (self.LB == []) or (self.LB[0] != self.couleurs[self.i %2]):
                     self.ui.label.setText(("Faute de jeu... C'est à {} de jouer.").format(self.joueurs[(self.i+1) % 2]))
                     self.ui.label.show()
                     self.faute = 1
@@ -297,7 +304,7 @@ class JeuBillard2 (QtWidgets.QMainWindow):
                 self.ui.label3.setStyleSheet("color: red")
                 self.ui.label3.show()
 
-            elif (self.table.plat.cpt[0]  >= 7 ) | (self.table.plat.cpt[0]  >= 7):  # on vient de jouer le dernier coup de la partie, on regarde maintenant qui a gagné.
+            elif (self.table.plat.cpt[0]  >= 7 ) | (self.table.plat.cpt[1]  >= 7):  # on vient de jouer le dernier coup de la partie, on regarde maintenant qui a gagné.
 
                 self.ui.label.setText("{} : {} points \n{} : {} points ".format(self.joueurs[1], self.table.points[1], self.joueurs[0],
                                                               self.table.points[0]))
@@ -359,7 +366,7 @@ class JeuBillard2 (QtWidgets.QMainWindow):
                 self.table.plat.viseur.dessinimage(self.painter2, self.xp, self.yp)
             # permet de ne pas afficher le point de visée tant qu'on n'a pas cliqué
 
-        self.table.plat.point.dessinimage(self.painter, self.table.plat[0].x, self.table.plat[0].y)
+        self.table.plat.point.dessinimage(self.painter, self.table.plat[0].x, self.table.plat[0].y, self.i %2)
 
         self.painter.end()
         self.painter2.end()
