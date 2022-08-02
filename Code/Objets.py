@@ -66,19 +66,19 @@ class Boule(metaclass = ABCMeta):  # une boule (blanche ou colorée), ses caract
         """
 
         if type (self) == Boule_blanche:
-            self.x = 214
-            self.y = 280
+            self.x = self.xdebut
+            self.y = self.ydebut
             self.vx, self.vy = 0, 0
             print("la boule blanche est tombée")
         elif type (self) == Boule_coloree :
             if self.type == "R" :
-                self.x = 400 - cpt
-                self.y = -50
+                self.x = 425 - cpt
+                self.y = 580
                 self.vx, self.vy = 0, 0
                 print ("une boule rouge est tombée")
             elif self.type == "J":
-                self.x = 540 + cpt
-                self.y = -50
+                self.x = 565 + cpt
+                self.y = 580
                 self.vx, self.vy = 0, 0
                 print("une boule jaune est tombée")
             else :
@@ -192,6 +192,8 @@ class Boule_blanche(Boule):  # on définit la classe représentant les boules bl
     image = QtGui.QImage("../Images/blancher.png")
     def __init__(self, x, y, r = 0.03):  #classe qui hérite de la classe boule
         super().__init__(x, y,r)
+        self.xdebut = x
+        self.ydebut = y
 
     def impulsion(self, cap_V0, norme_V0):
         """
@@ -218,6 +220,7 @@ class Boule_blanche(Boule):  # on définit la classe représentant les boules bl
         sortie  : 1 si la boule est considérée immobile, 0 si elle est en mouvement.
         """
 
+        #qp.drawImage(QtCore.QRect(self.x, self.y + 10 + 52, 30, 30), self.image)
         qp.drawImage(QtCore.QRect(10+self.x +50 ,self.y + 10 + 52,30,30), self.image)
 
 
@@ -236,33 +239,33 @@ class Plateau(list):  # le plateau est un espace délimité, composé d'une list
         #On joue uniquement dans le mode normal, avec deux boules blanches et une rouge, placées de maniere precise au debut de la partie:
         if mode == 1:
             self.n = 3
-            self.append(Boule_blanche(0.2 * self.be, 0.75 * self.bs, r= 1.3*self.be * 0.03 / 2.54))
-            self.append(Boule_blanche(0.2 * self.be, 0.25 * self.bs, r=1.3*self.be * 0.03 / 2.54))
-            self.append(Boule_coloree(0.8 * self.be, 0.5 * self.bs, r=1.3*self.be * 0.03 / 2.54, type = "R"))
+            self.append(Boule_blanche(0.2 * self.be , 0.75 * self.bs , r= 1.3*self.be * 0.03 / 2.54))
+            self.append(Boule_blanche(0.2 * self.be , 0.25 * self.bs , r=1.3*self.be * 0.03 / 2.54))
+            self.append(Boule_coloree(0.8 * self.be , 0.5 * self.bs , r=1.3*self.be * 0.03 / 2.54, type = "R"))
         else :
-            self.n = 16
+            self.n = 3
             self.cpt = [0, 0, 0, 0]
-            self.append(Boule_blanche(0.2 * self.be, 0.5 * self.bs, r=1.3 * self.be * 0.03 / 2.54))
+            self.append(Boule_blanche(0.23 * self.be, 0.47 * self.bs *1.1, r=1.3 * self.be * 0.03 / 2.54))
 
-            self.append(Boule_coloree(0.8 * self.be, 0.38 * self.bs, r=1.3 * self.be * 0.03 / 2.54, type = 'R'))
-            self.append(Boule_coloree(0.8 * self.be, 0.44 * self.bs, r=1.3 * self.be * 0.03 / 2.54, type = 'J'))
-            self.append(Boule_coloree(0.8 * self.be, 0.5 * self.bs, r=1.3 * self.be * 0.03 / 2.54, type = 'J'))
-            self.append(Boule_coloree(0.8 * self.be, 0.56 * self.bs, r=1.3 * self.be * 0.03 / 2.54, type = 'R'))
-            self.append(Boule_coloree(0.8 * self.be, 0.62 * self.bs, r=1.3 * self.be * 0.03 / 2.54, type = 'J'))
-
-            self.append(Boule_coloree(0.76 * self.be, 0.41 * self.bs, r=1.3 * self.be * 0.03 / 2.54, type = 'J'))
-            self.append(Boule_coloree(0.76 * self.be, 0.47 * self.bs, r=1.3 * self.be * 0.03 / 2.54, type = 'R'))
-            self.append(Boule_coloree(0.76 * self.be, 0.53 * self.bs, r=1.3 * self.be * 0.03 / 2.54, type = 'J'))
-            self.append(Boule_coloree(0.76 * self.be, 0.59 * self.bs, r=1.3 * self.be * 0.03 / 2.54, type = 'R'))
-
-            self.append(Boule_coloree(0.72 * self.be, 0.44 * self.bs, r=1.3 * self.be * 0.03 / 2.54, type='R'))
-            self.append(Boule_coloree(0.72 * self.be, 0.5 * self.bs, r=1.3 * self.be * 0.03 / 2.54, type='N'))
-            self.append(Boule_coloree(0.72 * self.be, 0.56 * self.bs, r=1.3 * self.be * 0.03 / 2.54, type = 'J'))
-
-            self.append(Boule_coloree(0.68 * self.be, 0.47 * self.bs, r=1.3 * self.be * 0.03 / 2.54, type = 'J'))
-            self.append(Boule_coloree(0.68 * self.be, 0.53 * self.bs, r=1.3 * self.be * 0.03 / 2.54, type = 'R'))
-
-            self.append(Boule_coloree(0.64 * self.be, 0.5 * self.bs, r=1.3 * self.be * 0.03 / 2.54, type='R'))
+            self.append(Boule_coloree(0.8 * self.be, 0.35 * self.bs *1.1, r=1.3 * self.be * 0.03 / 2.54, type = 'R'))
+            self.append(Boule_coloree(0.8 * self.be , 0.41 * self.bs *1.1, r=1.3 * self.be * 0.03 / 2.54, type = 'J'))
+            # self.append(Boule_coloree(0.8 * self.be , 0.47 * self.bs*1.1 , r=1.3 * self.be * 0.03 / 2.54, type = 'J'))
+            # self.append(Boule_coloree(0.8 * self.be , 0.53 * self.bs*1.1 , r=1.3 * self.be * 0.03 / 2.54, type = 'R'))
+            # self.append(Boule_coloree(0.8 * self.be , 0.59 * self.bs *1.1, r=1.3 * self.be * 0.03 / 2.54, type = 'J'))
+            #
+            # self.append(Boule_coloree(0.76 * self.be , 0.38 * self.bs *1.1, r=1.3 * self.be * 0.03 / 2.54, type = 'J'))
+            # self.append(Boule_coloree(0.76 * self.be , 0.44 * self.bs *1.1, r=1.3 * self.be * 0.03 / 2.54, type = 'R'))
+            # self.append(Boule_coloree(0.76 * self.be , 0.5 * self.bs *1.1, r=1.3 * self.be * 0.03 / 2.54, type = 'J'))
+            # self.append(Boule_coloree(0.76 * self.be , 0.56 * self.bs*1.1, r=1.3 * self.be * 0.03 / 2.54, type = 'R'))
+            #
+            # self.append(Boule_coloree(0.72 * self.be , 0.41 * self.bs*1.1, r=1.3 * self.be * 0.03 / 2.54, type='R'))
+            # self.append(Boule_coloree(0.72 * self.be , 0.47 * self.bs*1.1 , r=1.3 * self.be * 0.03 / 2.54, type='N'))
+            # self.append(Boule_coloree(0.72 * self.be , 0.53 * self.bs *1.1, r=1.3 * self.be * 0.03 / 2.54, type = 'J'))
+            #
+            # self.append(Boule_coloree(0.68 * self.be, 0.44 * self.bs *1.1, r=1.3 * self.be * 0.03 / 2.54, type = 'J'))
+            # self.append(Boule_coloree(0.68 * self.be, 0.5 * self.bs *1.1, r=1.3 * self.be * 0.03 / 2.54, type = 'R'))
+            #
+            # self.append(Boule_coloree(0.64 * self.be, 0.47 * self.bs *1.1, r=1.3 * self.be * 0.03 / 2.54, type='R'))
 
 
 
@@ -303,7 +306,7 @@ class Plateau(list):  # le plateau est un espace délimité, composé d'une list
         sortie  : None
         """
 
-        if (self[i].x < 0.1*self.be) & ((self[i].y < 0.1*self.bs) | (self[i].y > self.bs * (1- 0.1))):  # on est proche d'un bord (ici le bord est)
+        if (self[i].x < 0.025*self.be) & ((self[i].y < 0.05*self.bs) | (self[i].y > self.bs * (1- 0.05))):  # on est proche d'un bord (ici le bord est)
             if (len(posx[0]) <= 1) or (posx[i][-2] > self[i].x):  # on vérifie qu'on est pas en tout début de simulation,
                 if type (self[i]) == Boule_blanche :
                     Boule.tombe(self[i],0)  # ou que l'on est pas déjà en train de repartir du bord
@@ -317,7 +320,22 @@ class Plateau(list):  # le plateau est un espace délimité, composé d'une list
                 else :
                     Boule.tombe(self[i], 0)
                     self.cpt[2] += 1
-        elif (self[i].x > self.be *(1- 0.1)) & ((self[i].y < 0.1*self.bs) | (self[i].y > self.bs * (1- 0.1))):
+        elif (self[i].x > self.be *(1- 0.025)) & ((self[i].y < 0.05*self.bs) | (self[i].y > self.bs * (1- 0.05))):
+            if len(posx[0]) <= 1 or posx[i][-2] < self[i].x:
+                if type(self[i]) == Boule_blanche:
+                    Boule.tombe(self[i], 0)  # ou que l'on est pas déjà en train de repartir du bord
+                    self.cpt[3] += 1
+                elif self[i].type == "R":
+                    Boule.tombe(self[i], 50 * self.cpt[0])
+                    self.cpt[0] += 1
+                elif self[i].type == "J":
+                    Boule.tombe(self[i], 50* self.cpt[1])
+                    self.cpt[1] += 1
+                else:
+                    Boule.tombe(self[i], 0)
+                    self.cpt[2] += 1
+
+        elif (self[i].x > self.be *(0.46)) &  (self[i].x < self.be *(0.54)) & ((self[i].y < 0.021*self.bs) | (self[i].y > self.bs * (1- 0.021))):
             if len(posx[0]) <= 1 or posx[i][-2] < self[i].x:
                 if type(self[i]) == Boule_blanche:
                     Boule.tombe(self[i], 0)  # ou que l'on est pas déjà en train de repartir du bord

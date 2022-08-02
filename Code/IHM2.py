@@ -17,9 +17,9 @@ class JeuBillard2 (QtWidgets.QMainWindow):
         self.ui.setupUi(self)
 
 
-        pixmap = QtGui.QPixmap("../Images/billard_americain.png")  # on charge l'image d'arrière-plan
-        pixmap = QtGui.QPixmap.scaledToHeight (pixmap, 900 )
-        pixmap = QtGui.QPixmap.scaledToWidth(pixmap, 1100)
+        pixmap = QtGui.QPixmap("../Images/billard_americain_3.png")  # on charge l'image d'arrière-plan
+        pixmap = QtGui.QPixmap.scaledToHeight (pixmap, self.ui.con.height() )  #900
+        pixmap = QtGui.QPixmap.scaledToWidth(pixmap, self.ui.con.width())  #1100
 
         pal = QtGui.QPalette()
         pal.setBrush(QtGui.QPalette.Background, QtGui.QBrush(pixmap))
@@ -39,9 +39,10 @@ class JeuBillard2 (QtWidgets.QMainWindow):
         self.ui.con.paintEvent = self.dessinJeu
 
         self.hw, self.lw =  self.ui.con.height(), self.ui.con.width()   # largeur (x) du widget con, ie la table de billard, et  sa hauteur (y)
-        self.bande_n, self.bande_o, self.bande_e, self.bande_s = 76.2, 76.2, 76.2, 77  # epaisseurs des bandes sur notre image de table
-        self.ehfw, self.egfw = 10, 10  # ecart haut fenetre - widget, ecart gauche fenetre - widget
-        self.by, self.bx = self.hw - self.bande_n - self.bande_s, self.lw - self.bande_e - self.bande_o  # taille du tapis, correspondent à self.bn et self.be dans la classe plateau
+        #self.bande_n, self.bande_o, self.bande_e, self.bande_s = 76.2, 76.2, 76.2, 77  # epaisseurs des bandes sur notre image de table
+        #self.ehfw, self.egfw = 10, 10  # ecart haut fenetre - widget, ecart gauche fenetre - widget
+        #self.by, self.bx = self.hw - self.bande_n - self.bande_s, self.lw - self.bande_e - self.bande_o  # taille du tapis, correspondent à self.bn et self.be dans la classe plateau
+        self.by, self.bx = self.hw - 218, self.lw - 145
 
         self.distx, self.disty = 0,0  # distance de la queue à la boule tirée (initialisée à 0)
 
@@ -247,7 +248,7 @@ class JeuBillard2 (QtWidgets.QMainWindow):
                 # si on a mis la boule noir le jeu est fini, l'adversaire à gagner
             else:
                 print (self.LB)
-                print (self.LB[0], self.couleurs[self.i %2])
+                #print (self.LB[0], self.couleurs[self.i %2])
                 if (self.table.plat.cpt[3] > self.cpt_ant[3]) or (self.table.plat.cpt[(self.i +1) %2] > self.cpt_ant[(self.i +1) %2]) or (self.LB == []) or (self.LB[0] != self.couleurs[self.i %2]):
                     self.ui.label.setText(("Faute de jeu... C'est à {} de jouer.").format(self.joueurs[(self.i+1) % 2]))
                     self.ui.label.show()
