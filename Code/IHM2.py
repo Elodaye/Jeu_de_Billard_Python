@@ -8,14 +8,13 @@ from PyQt5.QtGui import QFont
 import numpy as np
 
 class JeuBillard2 (QtWidgets.QMainWindow):
-    def __init__(self, p1 = "joueur 1",p2 = "joueur 2", nb = 10, mode = 2):
+    def __init__(self, p1 = "joueur 1",p2 = "joueur 2",nb=10):
         super().__init__()
 
         self.joueurs = [p1,p2]  #on recueille les données de la fenêtre d'initialisation
 
         self.ui = Ui_mainWindow()  # ce qu'on a importé de Interface
         self.ui.setupUi(self)
-
 
         pixmap = QtGui.QPixmap("../Images/billard_americain_3.png")  # on charge l'image d'arrière-plan
         pixmap = QtGui.QPixmap.scaledToHeight (pixmap, self.ui.con.height() )  #900
@@ -29,7 +28,6 @@ class JeuBillard2 (QtWidgets.QMainWindow):
         self.ui.con.setPalette(pal)
 
         self.i = 0  # compteur qui représente le joueur qui est train de jouer (pair ou impair)
-        self.ANA = [] # analyse l'issue du coup: si le joueur à réussi à taper les 2 boules ou non
         self.MVT = []  # permet de vérifier qu'il y a toujours des boules en mouvement
 
         self.painter = QtGui.QPainter() # on instancie un premier peintre, pour les boules + le point qui désigne le joueur + le point de visée
@@ -39,9 +37,6 @@ class JeuBillard2 (QtWidgets.QMainWindow):
         self.ui.con.paintEvent = self.dessinJeu
 
         self.hw, self.lw =  self.ui.con.height(), self.ui.con.width()   # largeur (x) du widget con, ie la table de billard, et  sa hauteur (y)
-        #self.bande_n, self.bande_o, self.bande_e, self.bande_s = 76.2, 76.2, 76.2, 77  # epaisseurs des bandes sur notre image de table
-        #self.ehfw, self.egfw = 10, 10  # ecart haut fenetre - widget, ecart gauche fenetre - widget
-        #self.by, self.bx = self.hw - self.bande_n - self.bande_s, self.lw - self.bande_e - self.bande_o  # taille du tapis, correspondent à self.bn et self.be dans la classe plateau
         self.by, self.bx = self.hw - 218, self.lw - 145
 
         self.distx, self.disty = 0,0  # distance de la queue à la boule tirée (initialisée à 0)
@@ -71,9 +66,7 @@ class JeuBillard2 (QtWidgets.QMainWindow):
         self.timer.timeout.connect(self.timer_0) # chaque fois que ce timer "tombe à 0", on appele la méthode timer_0.
 
         self.ui.label0.setFont(QFont('Helvetica', 10))
-
         self.ui.label.setFont(QFont ('Helvetica',10.5))
-
         self.ui.label2.setFont(QFont('Helvetica', 11.5))
         self.ui.label3.setFont(QFont('Helvetica', 11.5))
 
@@ -136,10 +129,6 @@ class JeuBillard2 (QtWidgets.QMainWindow):
 
             if (self.table.plat.cpt[0] < 7 ) & (self.table.plat.cpt[1]  < 7) & (self.table.plat.cpt[2] != 1):  ## on se fiche de qui gagne, juste savoir si on continue à jouer
                 self.table.c += 1
-                x1, y1, x2, y2 = self.table.plat[self.i % 2 - 1].x, self.table.plat[self.i % 2 - 1].y, self.table.plat[
-                    self.i % 2 - 2].x, self.table.plat[self.i % 2 - 2].y
-
-                self.ANA = [x1, y1, x2, y2]  # on enregistre l'emplacement initial (avant tir) des boules que l'on doit toucher s'il on veut gagner un point
 
                 self.ui.label0.setText("Tour {}".format(self.table.c))
                 self.ui.label0.show()
@@ -206,15 +195,11 @@ class JeuBillard2 (QtWidgets.QMainWindow):
             self.timer.stop()
             self.ui.con.update()
 
-            self.table.points[0] = self.table.plat.cpt[0]  # le joueur marque un point
-            self.table.points[1] = self.table.plat.cpt[1]
+            self.table.points[0], self.table.points[1]  = self.table.plat.cpt[0], self.table.plat.cpt[1]
 
             for i in range(self.table.plat.n):
                 self.table.plat[i].vx, self.table.plat[i].vy = 0, 0  # on arrête les billes, puisque qu'elle ne sont pas immobiles,
                 # mais seulement mobiles avec une vitesse inférieure à eps (dans la fonction evolution)
-
-            # if self.ANA[0] - self.table.plat[self.i % 2 - 1].x != 0 and self.ANA[1] - self.table.plat[self.i % 2 - 1].y  !=0 and self.ANA[2] - \
-            #     self.table.plat[self.i % 2 - 2].x != 0 and self.ANA[3] - self.table.plat[self.i % 2 - 2].y != 0:
 
             if (self.table.plat.cpt[self.i %2] > self.cpt_ant[self.i %2]) and (self.table.plat.cpt[(self.i +1) %2] == self.cpt_ant[(self.i +1) %2])  and (self.table.plat.cpt[2] == self.cpt_ant[2]) and (self.table.plat.cpt[3] == self.cpt_ant[3]) and (self.LB[0] == self.couleurs[self.i %2]):
 
@@ -237,18 +222,7 @@ class JeuBillard2 (QtWidgets.QMainWindow):
                 self.ui.label0.setText("Tour {}".format(self.table.c + 1))
                 self.ui.label0.show()
 
-            #elif :
-               # si on a mis une boule de l'adversaire ou la blanche :
-            #self.i += 1  # c'est au joueur suivant de jouer -> va aider à changer la boule que l'on tape
-
-            #self.ui.label.setText(("Pas de chance... C'est à {} de jouer.").format(self.joueurs[self.i % 2]))
-            #self.ui.label.show()
-
-            #elif :
-                # si on a mis la boule noir le jeu est fini, l'adversaire à gagner
             else:
-                print (self.LB)
-                #print (self.LB[0], self.couleurs[self.i %2])
                 if (self.table.plat.cpt[3] > self.cpt_ant[3]) or (self.table.plat.cpt[(self.i +1) %2] > self.cpt_ant[(self.i +1) %2]) or (self.LB == []) or (self.LB[0] != self.couleurs[self.i %2]):
                     self.ui.label.setText(("Faute de jeu... C'est à {} de jouer.").format(self.joueurs[(self.i+1) % 2]))
                     self.ui.label.show()
@@ -349,7 +323,6 @@ class JeuBillard2 (QtWidgets.QMainWindow):
         if self.table.plat.queue.p == 0 :  # si la puissance p est nulle, c'est qu'on est en attente du coup suivant
 
             boulex, bouley = self.table.plat[0].x + 90, self.table.plat[0].y + 88.2
-            # TODO  la typiquement on a un modulo 2 qui est propre au mode français.
             # emplacement de la boule dans laquelle on tire
 
             dx, dy = self.table.plat.queue.x - self.xp, self.table.plat.queue.y - self.yp

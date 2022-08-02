@@ -40,3 +40,5 @@ voir pour mettre le jeu en réseau : pouvoir jouer avec Emilie
 . Rebonds orientés quand on est dans les coins
 
 . Factoriser des fonctions hyper simples
+
+. Le premier à marquer a la couleur de la boule

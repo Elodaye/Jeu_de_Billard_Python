@@ -1,16 +1,12 @@
 import numpy as np
-from numpy.random import randint
-from matplotlib import pyplot as plt
-import time
 from PyQt5 import QtGui, QtCore
 from abc import ABCMeta, abstractmethod
 
 class Boule(metaclass = ABCMeta):  # une boule (blanche ou colorée), ses caractéristiques (physiques et cinétiques)
-    def __init__(self, x, y, r=0.3, m=1):  # r le rayon, m la masse
+    def __init__(self, x, y, r=0.3):  # r le rayon, m la masse
         self.x = x
         self.y = y
         self.r = r
-        self.m = m
         self.vx = 0
         self.vy = 0
 
@@ -220,15 +216,13 @@ class Boule_blanche(Boule):  # on définit la classe représentant les boules bl
         sortie  : 1 si la boule est considérée immobile, 0 si elle est en mouvement.
         """
 
-        #qp.drawImage(QtCore.QRect(self.x, self.y + 10 + 52, 30, 30), self.image)
         qp.drawImage(QtCore.QRect(10+self.x +50 ,self.y + 10 + 52,30,30), self.image)
 
 
 class Plateau(list):  # le plateau est un espace délimité, composé d'une liste de boules
-    def __init__(self, l=10, L=10, nb=2, nc=1, k = 0.998, mode = 1):
+    def __init__(self, l=10, L=10, k = 0.998, mode = 1):
         super().__init__(self)
         self.bs, self.bn, self.bo, self.be = l, 0, 0, L   # bord sud, nord, ouest, est
-        #self.n = nb + nc  # nombre total de boules, dans le cas général, autre que dans le jeu actuel où il vaut 3
         self.k = k  # coefficient de résistance au roulement
         #self.mode = mode  # choix du mode de jeu, non encore implémenté
         self.queue = Queue()
@@ -243,29 +237,29 @@ class Plateau(list):  # le plateau est un espace délimité, composé d'une list
             self.append(Boule_blanche(0.2 * self.be , 0.25 * self.bs , r=1.3*self.be * 0.03 / 2.54))
             self.append(Boule_coloree(0.8 * self.be , 0.5 * self.bs , r=1.3*self.be * 0.03 / 2.54, type = "R"))
         else :
-            self.n = 3
+            self.n = 16
             self.cpt = [0, 0, 0, 0]
             self.append(Boule_blanche(0.23 * self.be, 0.47 * self.bs *1.1, r=1.3 * self.be * 0.03 / 2.54))
 
             self.append(Boule_coloree(0.8 * self.be, 0.35 * self.bs *1.1, r=1.3 * self.be * 0.03 / 2.54, type = 'R'))
             self.append(Boule_coloree(0.8 * self.be , 0.41 * self.bs *1.1, r=1.3 * self.be * 0.03 / 2.54, type = 'J'))
-            # self.append(Boule_coloree(0.8 * self.be , 0.47 * self.bs*1.1 , r=1.3 * self.be * 0.03 / 2.54, type = 'J'))
-            # self.append(Boule_coloree(0.8 * self.be , 0.53 * self.bs*1.1 , r=1.3 * self.be * 0.03 / 2.54, type = 'R'))
-            # self.append(Boule_coloree(0.8 * self.be , 0.59 * self.bs *1.1, r=1.3 * self.be * 0.03 / 2.54, type = 'J'))
-            #
-            # self.append(Boule_coloree(0.76 * self.be , 0.38 * self.bs *1.1, r=1.3 * self.be * 0.03 / 2.54, type = 'J'))
-            # self.append(Boule_coloree(0.76 * self.be , 0.44 * self.bs *1.1, r=1.3 * self.be * 0.03 / 2.54, type = 'R'))
-            # self.append(Boule_coloree(0.76 * self.be , 0.5 * self.bs *1.1, r=1.3 * self.be * 0.03 / 2.54, type = 'J'))
-            # self.append(Boule_coloree(0.76 * self.be , 0.56 * self.bs*1.1, r=1.3 * self.be * 0.03 / 2.54, type = 'R'))
-            #
-            # self.append(Boule_coloree(0.72 * self.be , 0.41 * self.bs*1.1, r=1.3 * self.be * 0.03 / 2.54, type='R'))
-            # self.append(Boule_coloree(0.72 * self.be , 0.47 * self.bs*1.1 , r=1.3 * self.be * 0.03 / 2.54, type='N'))
-            # self.append(Boule_coloree(0.72 * self.be , 0.53 * self.bs *1.1, r=1.3 * self.be * 0.03 / 2.54, type = 'J'))
-            #
-            # self.append(Boule_coloree(0.68 * self.be, 0.44 * self.bs *1.1, r=1.3 * self.be * 0.03 / 2.54, type = 'J'))
-            # self.append(Boule_coloree(0.68 * self.be, 0.5 * self.bs *1.1, r=1.3 * self.be * 0.03 / 2.54, type = 'R'))
-            #
-            # self.append(Boule_coloree(0.64 * self.be, 0.47 * self.bs *1.1, r=1.3 * self.be * 0.03 / 2.54, type='R'))
+            self.append(Boule_coloree(0.8 * self.be , 0.47 * self.bs*1.1 , r=1.3 * self.be * 0.03 / 2.54, type = 'J'))
+            self.append(Boule_coloree(0.8 * self.be , 0.53 * self.bs*1.1 , r=1.3 * self.be * 0.03 / 2.54, type = 'R'))
+            self.append(Boule_coloree(0.8 * self.be , 0.59 * self.bs *1.1, r=1.3 * self.be * 0.03 / 2.54, type = 'J'))
+
+            self.append(Boule_coloree(0.76 * self.be , 0.38 * self.bs *1.1, r=1.3 * self.be * 0.03 / 2.54, type = 'J'))
+            self.append(Boule_coloree(0.76 * self.be , 0.44 * self.bs *1.1, r=1.3 * self.be * 0.03 / 2.54, type = 'R'))
+            self.append(Boule_coloree(0.76 * self.be , 0.5 * self.bs *1.1, r=1.3 * self.be * 0.03 / 2.54, type = 'J'))
+            self.append(Boule_coloree(0.76 * self.be , 0.56 * self.bs*1.1, r=1.3 * self.be * 0.03 / 2.54, type = 'R'))
+
+            self.append(Boule_coloree(0.72 * self.be , 0.41 * self.bs*1.1, r=1.3 * self.be * 0.03 / 2.54, type='R'))
+            self.append(Boule_coloree(0.72 * self.be , 0.47 * self.bs*1.1 , r=1.3 * self.be * 0.03 / 2.54, type='N'))
+            self.append(Boule_coloree(0.72 * self.be , 0.53 * self.bs *1.1, r=1.3 * self.be * 0.03 / 2.54, type = 'J'))
+
+            self.append(Boule_coloree(0.68 * self.be, 0.44 * self.bs *1.1, r=1.3 * self.be * 0.03 / 2.54, type = 'J'))
+            self.append(Boule_coloree(0.68 * self.be, 0.5 * self.bs *1.1, r=1.3 * self.be * 0.03 / 2.54, type = 'R'))
+
+            self.append(Boule_coloree(0.64 * self.be, 0.47 * self.bs *1.1, r=1.3 * self.be * 0.03 / 2.54, type='R'))
 
 
 
@@ -381,38 +375,6 @@ class Plateau(list):  # le plateau est un espace délimité, composé d'une list
             return self.collisions(col,i,j+1, n+1)
 
 
-    def un_coup(self, dt,joueur=1):
-        """
-        On simule un coup de queue : on met en mouvement la boule blanche, et on traite collisions entre boules et avec la paroi.
-        Une fois le coup terminé (lorsque les boules ont toutes une vitesse inférieure à eps), on donne la vitesse 0 à chaque boule, pourqu'elles soient vraiment immobiles pour le tour suivant
-
-        entrées :
-                dt: float, correspond à l'intervalle de temps entre chaque actualisation de la vitesse et de la position.
-                joueur: int, vaut 1 ou 0, permet d'assigner le coup de queue au joueur qui l'a effectué.
-        """
-
-        print ("c'est au joueur {} de jouer".format (joueur)) #ligne utilisee pour les tests
-        MVT = np.array ([1 for i in range (self.n)]) # Vecteur de test: à chaque indice de boule, la methode evolution associera 1 si elle est en mouvement, 0 si elle est arretee
-        Boule_blanche.impulsion(self[joueur], 48, 400)
-
-        posx, posy = [[] for i in range(self.n)], [[] for i in range(self.n)]  # pour garder en mémoire les positions passées
-        for i in range(self.n):
-            posx[i].append(self[i].x)
-            posy[i].append(self[i].y)
-
-        while any (MVT): #Tant qu'il n'y a pas que des 0 dans MVT
-            for i in range(self.n):
-                self.proche_bord(posx, posy, i)  # on gère les rebonds sur les bords
-            self.collisions([],1,0,0)  # on gère les collisions entre boules
-
-            for i in range(self.n): # while self.T != np.array ([0 for i in range self.n]):
-                MVT[i] = Boule.evolution(self[i], dt,self.k, 0.05*self.be)  # On fait evoluer le vecteur MVT  et on actualise la vitesse et la position de chaque boule par rapport à l'instant precedent
-                posx[i].append(self[i].x)
-                posy[i].append(self[i].y)
-
-        for i in range(self.n):
-            self[i].vx, self[i].vy = 0,0  #on donne la vitesse 0 à chaque boule, pourqu'elles soient vraiment immobiles pour le tour suivant
-
 class Partie ():
     def __init__ (self, nb_coups, dt = 0.005, LL = 10, ll=10, mode = 1):
         self.nb_coups = nb_coups
@@ -423,31 +385,6 @@ class Partie ():
         self.L= LL
         self.plat = Plateau(l=self.l, L=self.L, mode = mode)
 
-    # def jouer (self) :  #En réalité, cette fonction n'est jamais appelée dans l'ihm, car on a adapte le corps de la methode dans l'IHM
-    #     """
-    #     On simule une partie: une succession de coup, effectués par l'un ou l'autre des joueurs.
-    #     """
-    #
-    #     i = 1
-    #     while self.c < self.nb_coups :  # il reste encore des coups à jouer
-    #         self.c+=1
-    #         ANA = [self.plat[i%2 -1].vx,self.plat[i%2 -1].vy, self.plat[i%2 -2].vx, self.plat[i%2 -2].vy]  #position avant le tir des boules à toucher
-    #         Plateau.un_coup (self.plat, self.dt,i %2)
-    #         if ANA[0] - self.plat[i%2 -1].vx == 0 and ANA [1] - self.plat[i%2 -1].vy and ANA[2] - self.plat[i%2 -2].vx == 0 and ANA [3] - self.plat[i%2 -3].vy ==0 :
-    #             print ("Vous avez marqué un point")  # les coordonnées des 2 boules ont changé, on a réussi le coup
-    #             self.points [i %2] += 1
-    #         else :
-    #             print ("Pas de chance... Au joueur suivant")
-    #             i += 1
-    #     print ("Joueur 1 : {} points /n Joueur 2 : {} points ".format (self.points[1], self.points[0]))
-    #     if self.points[0] != self.points[1]:
-    #         if self.points [0] > self.points [1]:
-    #             g = '2'
-    #         elif self.points [0] > self.points [1]:
-    #             g = '1'
-    #         print ("Le joueur {} a gagné ! Félicitations !".format (g))
-    #     else :
-    #         print ("Egalité ! Bravo à vous deux !")
 
 class Queue ():
 
