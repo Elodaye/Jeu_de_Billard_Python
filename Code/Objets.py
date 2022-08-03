@@ -262,7 +262,6 @@ class Plateau(list):  # le plateau est un espace délimité, composé d'une list
             self.append(Boule_coloree(0.64 * self.be, 0.47 * self.bs *1.1, r=1.3 * self.be * 0.03 / 2.54, type='R'))
 
 
-
     def proche_bord(self, posx, posy, i):
         """
         Si une boule est proche d'un bord, et que l'on constate que la boule se rapproche de ce bord,
