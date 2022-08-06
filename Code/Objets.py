@@ -10,13 +10,11 @@ class Boule(metaclass = ABCMeta):  # une boule (blanche ou colorée), ses caract
         self.vx = 0
         self.vy = 0
 
-
     @abstractmethod
     def dessinimage (self,qp) :
         pass
 
-
-    def evolution(self, dt,k, eps = 0.8):
+    def evolution(self, dt, k, eps = 0.8):
         """
         En l'absence de collision (ici donc), on suppose le mouvement des boules rectiligne (bords ou autres boules).
         Actualise la vitesse et la position de la boule.
@@ -41,9 +39,7 @@ class Boule(metaclass = ABCMeta):  # une boule (blanche ou colorée), ses caract
     def rebond(self, bord):
         """
         simule un rebond sur une paroi droite. Actualise la vitesse de la boule après rebond.
-
         entrée : string caractérisant la paroi sur laquelle il y a rebond (paroi nord, sud, est ou ouest)
-
         sortie : la nouvelle vitesse de la boule, après rebond
         """
 
@@ -52,44 +48,11 @@ class Boule(metaclass = ABCMeta):  # une boule (blanche ou colorée), ses caract
         elif bord in ['O', 'E']:
             self.vx = - self.vx
 
-    def tombe(self, cpt):
-        """
-        simule un rebond sur une paroi droite. Actualise la vitesse de la boule après rebond.
-
-        entrée : string caractérisant la paroi sur laquelle il y a rebond (paroi nord, sud, est ou ouest)
-
-        sortie : la nouvelle vitesse de la boule, après rebond
-        """
-
-        if type (self) == Boule_blanche:
-            self.x = self.xdebut
-            self.y = self.ydebut
-            self.vx, self.vy = 0, 0
-            print("la boule blanche est tombée")
-        elif type (self) == Boule_coloree :
-            if self.type == "R" :
-                self.x = 425 - cpt
-                self.y = 580
-                self.vx, self.vy = 0, 0
-                print ("une boule rouge est tombée")
-            elif self.type == "J":
-                self.x = 565 + cpt
-                self.y = 580
-                self.vx, self.vy = 0, 0
-                print("une boule jaune est tombée")
-            else :
-                self.x = 5
-                self.y = 10
-                self.vx, self.vy = 0, 0
-                print("une boule noire est tombée")
-
 
     def coll(self, boule2):
         """
         Simule la collision entre 2 boules. Change la vitesse de ces 2 boules.
-
         entrée : boule2, la boule qui entre en collision avec la première. On a accès à leur position, et à leur vitesse (norme et direction).
-
         sortie : None
         """
 
@@ -153,10 +116,8 @@ class Boule(metaclass = ABCMeta):  # une boule (blanche ou colorée), ses caract
             v2_p = v1*np.cos (d_angle)
             boule2.vx, boule2.vy, self.vx, self.vy = v2_p*np.cos (angle), v2_p*np.sin (angle), v1_p*np.cos ((2*angle_b1 - angle)%(2*np.pi)), v1_p*np.sin ((2*angle_b1  -angle)%(2*np.pi))
 
-class Boule_coloree(Boule):
-    # on définit la classe représentant les boules colorées, classe qui hérite de la classe Boule
+class Boule_coloree(Boule): # on définit la classe représentant les boules colorées, classe qui hérite de la classe Boule
 
-    image = QtGui.QImage("../Images/rouger.png")
     def __init__(self, x, y, r = 0.03, type = 'R'):
         super().__init__(x, y,r)
         if type == "R":
@@ -171,9 +132,7 @@ class Boule_coloree(Boule):
         """
         dessinimage :
         Affiche l'image de la boule rouge sur la table de billard, à son emplacement calculé
-
         entrée : le peintre utilisé pour afficher l'image
-
         sortie  : 1 si la boule est considérée immobile, 0 si elle est en mouvement.
         """
 
@@ -185,60 +144,53 @@ class Boule_coloree(Boule):
             qp.drawImage(QtCore.QRect(10 + self.x + 50 -3 , self.y + 10 + 52 -3 , 40, 40), self.image)
 
 class Boule_blanche(Boule):  # on définit la classe représentant les boules blanches, classe qui hérite de la classe Boule
-    image = QtGui.QImage("../Images/blancher.png")
+
     def __init__(self, x, y, r = 0.03):  #classe qui hérite de la classe boule
         super().__init__(x, y,r)
+        self.image = QtGui.QImage("../Images/blancher.png")
         self.xdebut = x
         self.ydebut = y
+        self.type = "B"
 
     def impulsion(self, cap_V0, norme_V0):
         """
         Met en mouvement la boule blanche, en modifiant sa vitesse.
-
         entrées : float cap_V0 : angle vers lequel la boule doit être propulsée
                   float norme_V0: norme de la vitesse donnée à la boule blanche
-
         sortie  : None
         """
 
         self.vy = norme_V0 * np.sin(cap_V0 * np.pi / 180) #v0[0]
         self.vx = norme_V0 * np.cos(cap_V0 * np.pi / 180) #v0[1]
-        # Recevoir uneimpulsion est une caracteristique propre aux boules blanches selon les règles du billard
+        # Recevoir une impulsion est une caracteristique propre aux boules blanches selon les règles du billard
         # Elles sont propulsées par un coup de queue, qui leur confère un mouvement initial representé par cap_V0 et norme_V0
 
 
     def dessinimage(self, qp):
         """
         Affiche l'image de la boule blanche sur la table de billard, à son emplacement calculé
-
         entrée : le peintre utilisé pour afficher l'image
-
-        sortie  : 1 si la boule est considérée immobile, 0 si elle est en mouvement.
         """
-
         qp.drawImage(QtCore.QRect(10+self.x +50 ,self.y + 10 + 52,30,30), self.image)
 
 
 class Plateau(list):  # le plateau est un espace délimité, composé d'une liste de boules
-    def __init__(self, l=10, L=10, k = 0.998, mode = 1):
+    def __init__(self, l=10, L=10, mode = 1):
         super().__init__(self)
         self.bs, self.bn, self.bo, self.be = l, 0, 0, L   # bord sud, nord, ouest, est
-        self.k = k  # coefficient de résistance au roulement
-        #self.mode = mode  # choix du mode de jeu, non encore implémenté
+        self.k = 0.998
         self.queue = Queue()
         self.point = Point()
         self.viseur = Point_clique() #3 instances des classes définies juste apres
         self.Lb = []
 
-        #On joue uniquement dans le mode normal, avec deux boules blanches et une rouge, placées de maniere precise au debut de la partie:
-        if mode == 1:
+        if mode == 1: # Billard français
             self.n = 3
             self.append(Boule_blanche(0.2 * self.be , 0.75 * self.bs , r= 1.3*self.be * 0.03 / 2.54))
             self.append(Boule_blanche(0.2 * self.be , 0.25 * self.bs , r=1.3*self.be * 0.03 / 2.54))
             self.append(Boule_coloree(0.8 * self.be , 0.5 * self.bs , r=1.3*self.be * 0.03 / 2.54, type = "R"))
-        else :
+        else :       # Billard anglais
             self.n = 16
-            self.cpt = [0, 0, 0, 0]
             self.append(Boule_blanche(0.23 * self.be, 0.47 * self.bs *1.1, r=1.3 * self.be * 0.03 / 2.54))
 
             self.append(Boule_coloree(0.8 * self.be, 0.35 * self.bs *1.1, r=1.3 * self.be * 0.03 / 2.54, type = 'R'))
@@ -261,16 +213,17 @@ class Plateau(list):  # le plateau est un espace délimité, composé d'une list
 
             self.append(Boule_coloree(0.64 * self.be, 0.47 * self.bs *1.1, r=1.3 * self.be * 0.03 / 2.54, type='R'))
 
+            self.pos = {"B" : (self[0].xdebut, self[0].xdebut), "N" : (5,10), "J" : (465,580), "R" : (425,580)}
+            self.cpt = {"B": 0, "N": 0, "J": 0, "R": 0}
+
 
     def proche_bord(self, posx, posy, i):
         """
         Si une boule est proche d'un bord, et que l'on constate que la boule se rapproche de ce bord,
         on appelle la fonction rebond, en précisant sur quelle paroi celui-ci survient.
-
         entrées :
                 posx, posy : liste des abscisses et ordonnées de toutes les boules du plateau
                 int i : l'indice de la boule dans la liste de boules (self.plateau), dont on veut vérifier la proximité du bord.
-
         sortie  : None
         """
 
@@ -290,63 +243,35 @@ class Plateau(list):  # le plateau est un espace délimité, composé d'une list
     def proche_trous(self, posx, posy, i):
         """
         Si une boule est proche d'un trou, et que l'on constate que la boule se rapproche de ce trou,
-        la boule va tomber dans le trou, elle n'est plus dans la partie.
-
+        la boule va tomber dans le trou. La boule blanche est placée à une position de remise en jeu, les autres sont sorties du jeu.
         entrées :
                 posx, posy : liste des abscisses et ordonnées de toutes les boules du plateau
                 int i : l'indice de la boule dans la liste de boules (self.plateau), dont on veut vérifier la proximité du bord.
-
         sortie  : None
         """
 
-        if (self[i].x < 0.025*self.be) & ((self[i].y < 0.05*self.bs) | (self[i].y > self.bs * (1- 0.05))):  # on est proche d'un bord (ici le bord est)
-            if (len(posx[0]) <= 1) or (posx[i][-2] > self[i].x):  # on vérifie qu'on est pas en tout début de simulation,
-                if type (self[i]) == Boule_blanche :
-                    Boule.tombe(self[i],0)  # ou que l'on est pas déjà en train de repartir du bord
-                    self.cpt[3] += 1
-                elif self[i].type == "R":
-                    Boule.tombe(self[i],50* self.cpt[0])
-                    self.cpt[0] += 1
-                elif self[i].type == "J":
-                    Boule.tombe(self[i], 50 * self.cpt[1])
-                    self.cpt[1] += 1
-                else :
-                    Boule.tombe(self[i], 0)
-                    self.cpt[2] += 1
-        elif (self[i].x > self.be *(1- 0.025)) & ((self[i].y < 0.05*self.bs) | (self[i].y > self.bs * (1- 0.05))):
-            if len(posx[0]) <= 1 or posx[i][-2] < self[i].x:
-                if type(self[i]) == Boule_blanche:
-                    Boule.tombe(self[i], 0)  # ou que l'on est pas déjà en train de repartir du bord
-                    self.cpt[3] += 1
-                elif self[i].type == "R":
-                    Boule.tombe(self[i], 50 * self.cpt[0])
-                    self.cpt[0] += 1
-                elif self[i].type == "J":
-                    Boule.tombe(self[i], 50* self.cpt[1])
-                    self.cpt[1] += 1
-                else:
-                    Boule.tombe(self[i], 0)
-                    self.cpt[2] += 1
+        if ((self[i].x < 0.025*self.be) & ((self[i].y < 0.05*self.bs) | (self[i].y > self.bs * (1- 0.05)))) \
+        or ((self[i].x > self.be *(1- 0.025)) & ((self[i].y < 0.05*self.bs) | (self[i].y > self.bs * (1- 0.05)))) \
+        or ((self[i].x > self.be *(0.47)) &  (self[i].x < self.be *(0.56)) & ((self[i].y < 0.05*self.bs) | (self[i].y > self.bs * (1- 0.05)))):
 
-        elif (self[i].x > self.be *(0.46)) &  (self[i].x < self.be *(0.54)) & ((self[i].y < 0.021*self.bs) | (self[i].y > self.bs * (1- 0.021))):
-            if len(posx[0]) <= 1 or posx[i][-2] < self[i].x:
-                if type(self[i]) == Boule_blanche:
-                    Boule.tombe(self[i], 0)  # ou que l'on est pas déjà en train de repartir du bord
-                    self.cpt[3] += 1
-                elif self[i].type == "R":
-                    Boule.tombe(self[i], 50 * self.cpt[0])
-                    self.cpt[0] += 1
-                elif self[i].type == "J":
-                    Boule.tombe(self[i], 50* self.cpt[1])
-                    self.cpt[1] += 1
-                else:
-                    Boule.tombe(self[i], 0)
-                    self.cpt[2] += 1
+            self[i].vx, self[i].vy = 0, 0
+
+            if self[i].type == "J":
+                ant = self.pos["J"]
+                act = (ant[0] + 50, ant[1])
+                self.pos["J"] = act
+            elif self[i].type == "R":
+                ant = self.pos["R"]
+                act = (ant[0] - 50, ant[1])
+                self.pos["R"] = act
+
+            (self[i].x, self[i].y) = self.pos[self[i].type][0],  self.pos[self[i].type][1]
+            self.cpt[self[i].type] = self.cpt[self[i].type]  + 1
+
 
     def collisions(self,col,i,j,n): #méthode récursive
         """"
         Détecte chaque collision imminente entre les boules, et simule la déviation de trajectoire associée, en appelant la fonction coll, qui gère la collision entre 2 boules
-
         Entrees:
                 col: liste vide à l'initialisation de la recursion
                 i, j : deux boules
@@ -380,14 +305,11 @@ class Partie ():
         self.dt = dt
         self.c = 0  # on s'arrête à nb_coups
         self.points = [0,0]  #en position 0, le joueur 2
-        self.l = ll
-        self.L= LL
-        self.plat = Plateau(l=self.l, L=self.L, mode = mode)
+        self.plat = Plateau(l=ll, L=LL, mode = mode)
 
 
 class Queue ():
 
-    l = QtGui.QImage("../Images/queues_l/qb8.png")
     def __init__(self):
         self.x = 0
         self.y = 0
@@ -395,6 +317,7 @@ class Queue ():
         self.alpha_q = 180  #pour afficher la queue
         self.alpha_b = 0  # pour donner le coup de queue ,direction qu'on donnera à la boule
         #il y a pi de différence entre les 2 alpha
+        self.l = QtGui.QImage("../Images/queues_l/qb8.png")
 
     def dessinimage(self, qp,angle, boulex=-10,bouley=-10):
         """
@@ -416,15 +339,12 @@ class Queue ():
         qp.drawImage(QtCore.QRect(boulex-290 -21.5, bouley-285 -24.2, 600, 600) ,self.l)
 
 class Point ():
-    #image = QtGui.QImage("../Images/point2.png")
 
     def dessinimage(self, qp, boulex,bouley, i=0):
         """
         Affiche le point rouge se situant au centre de la boule blanche dans laquelle il faut tirer avec la canne.
-
         entrée : qp, le peintre utilisé pour afficher l'image
                  boulex, bouley : coordoonées de la boule visee
-
         sortie  : 1 si la boule est considérée immobile, 0 si elle est en mouvement.
         """
         if i == 0 :
@@ -434,7 +354,7 @@ class Point ():
         qp.drawImage(QtCore.QRect(boulex +93 -23 , bouley+95 -24.6, 10, 10), image)
 
 class Point_clique ():
-    image = QtGui.QImage("../Images/point_clique2.png")
+
 
     def dessinimage(self, qp, boulex,bouley):
         """
@@ -445,7 +365,8 @@ class Point_clique ():
         entrée : qp, le peintre utilisé pour afficher l'image
                  boulex, bouley : coordoonées de la boule visee
         """
-        qp.drawImage(QtCore.QRect(boulex-20 , bouley-45, 22, 22), self.image)
+        image = QtGui.QImage("../Images/point_clique2.png")
+        qp.drawImage(QtCore.QRect(boulex-20 , bouley-45, 22, 22), image)
 
 if __name__ == '__main__':
     p = Partie (3,0.1)

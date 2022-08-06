@@ -78,11 +78,6 @@ class Window_Menu (QtWidgets.QMainWindow) :
         self.bouton_mode_2.move(240, 120)  # position du bouton
         self.bouton_mode_2.clicked.connect(self.choix_mode_2)
 
-        #self.layout.setSizeConstraint(100)
-
-        #self.layout.addRow(self.bouton_mode_1, self.bouton_mode_2)
-        #self.layout.addRow()
-
         self.layout.addWidget(self.bouton_mode_1)
         self.layout.addWidget(self.bouton_mode_2)
         self.layout.addWidget(self.bouton_valider)
@@ -112,21 +107,18 @@ class Window_Menu (QtWidgets.QMainWindow) :
         p1 = self.prenom1.text()
         p2 = self.prenom2.text()
         nb = self.nb_tour.text()
-        p1 = "Elo"
-        p2 = "Mat"
-        nb = "20"
         mode = self.mode
         try :
             nb = int (nb)
             if nb > 1 :  # les joueurs ont entré une donnée adaptée
                 if mode != 0 :
                     if mode == 1 :
-                        print ("vous avez choisis le mode " , mode)
+                        print ("vous avez choisi le mode " , mode)
                         self.win_deux = JeuBillard(p1, p2, nb)  # on va pouvoir lancer le jeu avec les paramètres fournis par les joueurs
                         self.win_deux.show()                  # La fenêtre billard est lancée
                         self.close()
                     else :
-                        print("vous avez choisis le mode ", mode)
+                        print("vous avez choisi le mode ", mode)
                         self.win_deux2 = JeuBillard2(p1, p2, nb )
                         self.win_deux2.show()  # La fenêtre billard est lancée
                         self.close()
