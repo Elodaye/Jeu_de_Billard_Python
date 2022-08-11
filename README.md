@@ -9,7 +9,7 @@ Le premier commit correspond au travail brut effectué en première année d'éc
 
 ## 2. Ajout d'une interface pour choisir le mode de jeu 
 
-<img src="https://github.com/Elodaye/Jeu_de_Billard_Python/blob/main/Images/InterfaceMode.png" alt="Alt text" title="Mode 1, billard français">
+<img src="https://github.com/Elodaye/Jeu_de_Billard_Python/blob/main/Images/interfaceMode.png" alt="Alt text" title="Mode 1, billard français">
 
 ## 3. Nouveau mode de jeu, billard classique, anglais 
 
