@@ -1,4 +1,4 @@
-from IHM import JeuBillard
+from IHM1 import JeuBillard
 from IHM2 import JeuBillard2
 
 from PyQt5.QtCore import *
@@ -71,7 +71,7 @@ class Window_Menu (QtWidgets.QMainWindow) :
         self.bouton_mode_1.move(20, 120)  # position du bouton
         self.bouton_mode_1.clicked.connect(self.choix_mode_1)
 
-        self.bouton_mode_2 = QtWidgets.QPushButton("Mode 2 : Américain", self)  # on crée un bouton qui affichera 'Lancer la partie'
+        self.bouton_mode_2 = QtWidgets.QPushButton("Mode 2 : Anglais", self)  # on crée un bouton qui affichera 'Lancer la partie'
         self.bouton_mode_2.setFixedSize(150, 30)  # taille du bouton
         self.bouton_mode_2.setFont(QFont('Calibri', 11))  # type et taille de police
         self.bouton_mode_2.setStyleSheet("background-color: white")
