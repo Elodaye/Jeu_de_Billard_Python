@@ -1,5 +1,5 @@
 # Jeu_de_Billard_Python
-Jeu de billard codé en python, première expérience de création d'IHM
+Jeu de billard codé en Python, première expérience de création d'IHM
 
 Le premier commit correspond au travail brut effectué en première année d'école d'ingénieur avec un camarade. A l'époque, il n'y avait qu'un seul mode de jeu, le billard français. 
 
